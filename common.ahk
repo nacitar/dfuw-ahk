@@ -35,7 +35,7 @@ numpad_key(num)
 }
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Flag constants
+;; Flags/Constants
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; Bit flags for right modifier keys; used with send_mod
@@ -54,44 +54,12 @@ MOD_LEFT   := MOD_LSHIFT|MOD_LCTRL|MOD_LALT|MOD_LWIN
 MOD_RIGHT  := MOD_RSHIFT|MOD_RCTRL|MOD_RALT|MOD_RWIN 
 MOD_ALL    := MOD_LEFT|MOD_RIGHT
 
-
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; CUSTOMIZATION
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-; MUST BE RIGHT MODIFIERS (can be or'd together)
-RMOD_LEFT_RADIAL := MOD_RALT
-RMOD_RIGHT_RADIAL := MOD_RCTRL
-RMOD_QUICK_ITEM := MOD_RSHIFT
-
-; Which key for which radial slot?  I suggest numpad for all of these, but you can differ if you wish..
-get_radial_key(is_right,slot)
-{
-	return numpad_key(slot)
-}
-; Which key for the quick item slot?
-get_quick_item_key(slot)
-{
-	return numpad_key(slot)
-}
-
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The meat of it 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-; Wrappers
-get_left_radial_key(slot)
-{
-	return get_radial_key(0,slot)
-}
-get_right_radial_key(slot)
-{
-	return get_radial_key(1,slot)
-}
+; Identifiers for weapons that are selected
+; TODO: will we need two 2h weapons to be viable in this too?  if so, enhancement will be needed
+WEAP_STAFF := 0
+WEAP_2H := 1
+WEAP_1H := 2
+WEAP_SHIELD := 3
 
 ; Converts individual mod flags to their key names
 mod_to_key(flag)
@@ -147,6 +115,30 @@ key_string(key)
 {
 	return "{" . key . "}"
 }
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; CUSTOMIZATION
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Include the user's settings; expected to provide get_radial_key() and get_quick_item_key()
+#include settings.ahk
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Slot selection logic 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Wrappers
+get_left_radial_key(slot,ByRef rmods_out)
+{
+	return get_radial_key(0,slot,rmods_out)
+}
+get_right_radial_key(slot,ByRef rmods_out)
+{
+	return get_radial_key(1,slot,rmods_out)
+}
+
 ; Turns a key and a boolean into a string representing a press or release of that key
 keypress_string(key,pressed)
 {
@@ -172,7 +164,7 @@ get_rmod_press_str(key,rmods)
 	{
 		rmods_down := mod_press_str(MOD_RSHIFT,rmods) . mod_press_str(MOD_RCTRL,rmods) . mod_press_str(MOD_RALT,rmods)
 		; release reversed
-		rmods_up := mod_press_str(MOD_RALT,0) . mod_press_str(MOD_RCTRL,0) . mod_press_str(MOD_RCTRL,0)
+		rmods_up := mod_press_str(MOD_RALT,0) . mod_press_str(MOD_RCTRL,0) . mod_press_str(MOD_RSHIFT,0)
 	}
 	
 	; assemble the keypress and return it
@@ -188,10 +180,11 @@ send_rmod_press(key,rmods)
 get_radial_skill_press_str(is_right,slot)
 {
 	global
-	; We're using the number pad for these keys
-	rmods := ((is_right)?(RMOD_RIGHT_RADIAL):(RMOD_LEFT_RADIAL))
+	; Initial rmods; may be changed by get_radial_key()
+	rmods := 0
+	key := get_radial_key(is_right,slot,rmods)
 	; Return the keypress string
-	return get_rmod_press_str(get_radial_key(is_right,slot),rmods)
+	return get_rmod_press_str(key,rmods)
 }
 get_left_radial_skill_press_str(slot)
 {
@@ -218,8 +211,65 @@ right_radial_skill(slot)
 get_quick_item_press_str(slot)
 {
 	global
-	return get_rmod_press_str(get_quick_item_key(slot),RMOD_QUICK_ITEM)
+	; Initial rmods; may be changed by get_quick_item_key()
+	rmods := 0
+	key := get_quick_item_key(slot,rmods)
+	; Return the keypress string
+	return get_rmod_press_str(key,rmods)
 }
+; Sends the keypress returned by get_quick_item_press_str
+quick_item(slot)
+{
+	var_send(get_quick_item_press_str(slot))
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Game functions 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+equip_staff()
+{
+	global
+	quick_item(get_weapon_slot(WEAP_STAFF))
+}
+equip_2h()
+{
+	global
+	quick_item(get_weapon_slot(WEAP_2H))
+}
+equip_1h()
+{
+	global
+	quick_item(get_weapon_slot(WEAP_1H))
+}
+equip_shield()
+{
+	; Due to paperdoll locking, we need a timer for equipping a shield after a 1H
+	; This label lets us jump into this function from the timer
+	equipshield_callback:
+	global
+	SetTimer, equipshield_callback, Off
+	quick_item(get_weapon_slot(WEAP_SHIELD))
+
+	; Need an explicit return to make the timer callback happy
+	return
+}
+equip_shield_delayed()
+{
+	global
+	SetTimer, equipshield_callback, Off
+	SetTimer, equipshield_callback, %SHIELD_DELAY_MS%
+}
+equip_1h_shield()
+{
+	equip_1h()
+	equip_shield_delayed()
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Keymapping functions 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; When you press key, forward the press, wait for release, then forward the release to newkey
 remap(key,newkey)
 {
