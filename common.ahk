@@ -23,7 +23,7 @@ var_msgbox(value)
 	MsgBox, %value%
 }
 ; returns flag if cond is not false; otherwise returns 0 
-cond_flag(val,cond)
+cond_flag(flag,cond)
 {
 	if (cond)
 		return flag
@@ -45,6 +45,14 @@ send_press(down_str,up_str)
 	var_send(up_str)
 }
 
+send_press_hold(down_str,up_str,waitfor_keyup)
+{
+	global
+	var_send(down_str)
+	KeyWait, %waitfor_keyup%
+	var_send(up_str)
+}
+	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Flags/Constants
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -77,13 +85,11 @@ WEAP_SHIELD := 4
 mod_to_key(flag)
 {
 	global
-	if (flag = MOD_RSHIFT)
-		return "RShift"
-	else if (flag = MOD_RCTRL)
+	if (flag = MOD_RCTRL)
 		return "RCtrl"
 	else if (flag = MOD_RALT)
 		return "RAlt"
-	if (flag = MOD_LSHIFT)
+	else if (flag = MOD_LSHIFT)
 		return "LShift"
 	else if (flag = MOD_LCTRL)
 		return "LCtrl"
@@ -98,6 +104,7 @@ mod_to_key(flag)
 ; Returns the flag if the key is pressed, else 0
 mod_state(flag)
 {
+	global
 	return cond_flag(flag,GetKeyState(mod_to_key(flag),"P"))
 }
 ; The state of the left modifier keys
@@ -193,6 +200,17 @@ send_rmod_press(key,rmods)
 	
 	send_press(down_str,up_str)
 }
+; Sends the key desired, waiting for the waitfor_keyup key to be released
+send_rmod_hold(key,rmods,waitfor_keyup)
+{
+	global
+	down_str := ""
+	up_str := ""
+	get_rmod_press_str(key,rmods,down_str,up_str)
+
+	send_press_hold(down_str,up_str,waitfor_keyup)
+}
+	
 ; Returns the keypress string to specify the desired radial skill
 get_radial_skill_press_str(is_right,slot,ByRef down_str_out,ByRef up_str_out)
 {

@@ -63,7 +63,106 @@ hk_mbutton()
 	}
 }
 
+; not generic!
+radial_menu(is_right)
+{
+	global
+	key := ((is_right)?("e"):("q"))
+	state := lmod_state()
+	; Holding alt makes the wheel act normally
+	if ((state & MOD_LALT) != 0)
+	{
+		send_rmod_hold(key,MOD_RALT,key)
+	}
+	else if ((state & MOD_LCTRL) != 0)
+	{
+		send_rmod_hold(key,MOD_RCTRL,key)
+	}
+	else
+	{
+		passthru(key)
+		return 0
+	}
+	return 1
+}
+*q::
+	radial_menu(0)
+	return
+*e::
+	radial_menu(1)
+	return
 
+$*XButton1::
+	; nothing yet
+	return
+
+$*XButton2::
+	state := lmod_state()
+	; Holding alt makes the wheel act normally
+	if ((state & MOD_LCTRL) != 0)
+	{
+		; efficiency
+		left_radial_skill(7)
+	}
+	else if ((state & MOD_LALT) != 0)
+	{
+		; leap
+		left_radial_skill(6)
+	}
+	else
+	{
+		; dash
+		left_radial_skill(5)
+	}
+	return
+
+$*`::
+	state := lmod_state()
+	if ((state & MOD_LALT) = MOD_LALT)
+	{
+		; skinning knife
+		quick_item(8)
+	}
+	return
+
+
+LBUTTON_WAS_PLAIN:=0
+; rebound left action trigger to APPS
+*LButton::
+	LBUTTON_WAS_PLAIN:=0
+	state := lmod_state()
+	if ((state & (MOD_LCTRL|MOD_LALT)) = (MOD_LCTRL|MOD_LALT))
+	{
+		; health to mana
+		left_radial_skill(4)
+	}
+	else if ((state & MOD_LCTRL) = MOD_LCTRL)
+	{
+		; stamina to health
+		left_radial_skill(3)
+	}
+	else if ((state & MOD_LALT) = MOD_LALT)
+	{
+		; mana to stamina
+		left_radial_skill(2)
+	}
+	else
+	{
+		Send, {AppsKey down}
+		Send, {LButton down}
+		LBUTTON_WAS_PLAIN := 1
+	}
+	return
+
+*LButton up::
+	Send, {LButton up}
+	Send, {AppsKey up}
+	if (LBUTTON_WAS_PLAIN)
+	{
+		; clear skill
+		send_press("{`` down}","{`` up}")
+	}
+	return
 ; No $; game doesn't get this 
 *WheelDown::
 	state := lmod_state()
