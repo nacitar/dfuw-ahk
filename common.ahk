@@ -1,6 +1,7 @@
 ; Author: nacitar sevaht
 ; License: Public Domain 
 
+; NOTE: Autohotkey has a bug to do with not releasing RSHIFT when told to do an up event
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Autohotkey supplements
@@ -33,13 +34,23 @@ numpad_key(num)
 {
 	return "Numpad" . to_string(num)
 }
+; How many ms to hold presses; DF:UW requires this.
+PRESS_DURATION_MS := 5
+; Press/release
+send_press(down_str,up_str)
+{
+	global
+	var_send(down_str)
+	Sleep, %PRESS_DURATION_MS%
+	var_send(up_str)
+}
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Flags/Constants
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; Bit flags for right modifier keys; used with send_mod
-MOD_RSHIFT := (1 << 0)
+; Intentionally omitting rshift due to autohotkey not releasing it when it should
 MOD_RCTRL  := (1 << 1)
 MOD_RALT   := (1 << 2)
 MOD_LSHIFT := (1 << 3)
@@ -51,15 +62,16 @@ MOD_LWIN   := (1 << 7)
 
 ; All inclusive masks
 MOD_LEFT   := MOD_LSHIFT|MOD_LCTRL|MOD_LALT|MOD_LWIN 
-MOD_RIGHT  := MOD_RSHIFT|MOD_RCTRL|MOD_RALT|MOD_RWIN 
+MOD_RIGHT  := MOD_RCTRL|MOD_RALT|MOD_RWIN 
 MOD_ALL    := MOD_LEFT|MOD_RIGHT
 
 ; Identifiers for weapons that are selected
 ; TODO: will we need two 2h weapons to be viable in this too?  if so, enhancement will be needed
 WEAP_STAFF := 0
-WEAP_2H := 1
-WEAP_1H := 2
-WEAP_SHIELD := 3
+WEAP_BOW := 1
+WEAP_2H := 2
+WEAP_1H := 3
+WEAP_SHIELD := 4
 
 ; Converts individual mod flags to their key names
 mod_to_key(flag)
@@ -150,54 +162,61 @@ mod_press_str(flag,mask)
 	return keypress_string(mod_to_key(flag),mask&flag)
 }
 ; Unholy Wars only lets you use two modifiers for a hotkey
-; Returns the keypress command with the specified right-modifiers down with your keypress, releasing when done
-get_rmod_press_str(key,rmods)
+; Fills passed down/up str vars with the down and up send string for this press.
+get_rmod_press_str(key,rmods,ByRef down_str_out,ByRef up_str_out)
 {
 	global
 	; Providing an empty string "" as the mode presses the button without changing any modifiers
 	if (rmods = "")
 	{
-		rmods_down := ""
-		rmods_up := ""
+		down_str_out := ""
+		up_str_out := ""
 	}
 	else
 	{
-		rmods_down := mod_press_str(MOD_RSHIFT,rmods) . mod_press_str(MOD_RCTRL,rmods) . mod_press_str(MOD_RALT,rmods)
+		down_str_out := mod_press_str(MOD_RCTRL,rmods) . mod_press_str(MOD_RALT,rmods)
 		; release reversed
-		rmods_up := mod_press_str(MOD_RALT,0) . mod_press_str(MOD_RCTRL,0) . mod_press_str(MOD_RSHIFT,0)
+		up_str_out := mod_press_str(MOD_RALT,0) . mod_press_str(MOD_RCTRL,0)
 	}
-	
-	; assemble the keypress and return it
-	keypress := rmods_down . key . rmods_up
-	return keypress
+
+	down_str_out := down_str_out . keypress_string(key,1)
+	up_str_out := keypress_string(key,0) . up_str_out
 }
+	
 ; Sends the keypress after calling get_rmod_press_str
 send_rmod_press(key,rmods)
 {
-	var_send(get_rmod_press_str(key,rmods))
+	global
+	down_str := ""
+	up_str := ""
+	get_rmod_press_str(key,rmods,down_str,up_str)
+	
+	send_press(down_str,up_str)
 }
 ; Returns the keypress string to specify the desired radial skill
-get_radial_skill_press_str(is_right,slot)
+get_radial_skill_press_str(is_right,slot,ByRef down_str_out,ByRef up_str_out)
 {
 	global
 	; Initial rmods; may be changed by get_radial_key()
 	rmods := 0
 	key := get_radial_key(is_right,slot,rmods)
-	; Return the keypress string
-	return get_rmod_press_str(key,rmods)
+	get_rmod_press_str(key,rmods,down_str_out,up_str_out)
 }
-get_left_radial_skill_press_str(slot)
+get_left_radial_skill_press_str(slot,ByRef down_str_out,ByRef up_str_out)
 {
-	return get_radial_skill_press_str(0,slot)
+	get_radial_skill_press_str(0,slot,down_str_out,up_str_out)
 }
-get_right_radial_skill_press_str(slot)
+get_right_radial_skill_press_str(slot,ByRef down_str_out,ByRef up_str_out)
 {
-	return get_radial_skill_press_str(1,slot)
+	get_radial_skill_press_str(1,slot,down_str_out,up_str_out)
 }
 ; Sends the keypress returned by get_radial_skill_press_str
 radial_skill(is_right,slot)
 {
-	var_send(get_radial_skill_press_str(is_right,slot))
+	down_str := ""
+	up_str := ""
+	get_radial_skill_press_str(is_right,slot,down_str,up_str)
+	send_press(down_str,up_str)
 }
 left_radial_skill(slot)
 {
@@ -208,19 +227,22 @@ right_radial_skill(slot)
 	radial_skill(1,slot)
 }
 ; Returns the keypress string to choose a quick item slot
-get_quick_item_press_str(slot)
+get_quick_item_press_str(slot,ByRef down_str_out,ByRef up_str_out))
 {
 	global
 	; Initial rmods; may be changed by get_quick_item_key()
 	rmods := 0
 	key := get_quick_item_key(slot,rmods)
 	; Return the keypress string
-	return get_rmod_press_str(key,rmods)
+	get_rmod_press_str(key,rmods,down_str_out,up_str_out)
 }
 ; Sends the keypress returned by get_quick_item_press_str
 quick_item(slot)
 {
-	var_send(get_quick_item_press_str(slot))
+	down_str := ""
+	up_str := ""
+	get_quick_item_press_str(slot,down_str,up_str)
+	send_press(down_str,up_str)
 }
 
 
@@ -231,6 +253,11 @@ equip_staff()
 {
 	global
 	quick_item(get_weapon_slot(WEAP_STAFF))
+}
+equip_bow()
+{
+	global
+	quick_item(get_weapon_slot(WEAP_BOW))
 }
 equip_2h()
 {

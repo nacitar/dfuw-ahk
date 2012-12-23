@@ -1,4 +1,4 @@
-;#IfWinActive, Darkfall Online
+#IfWinActive, Darkfall Online
 #SingleInstance force
 #NoEnv
 
@@ -8,15 +8,14 @@
 #HotkeyInterval 1  ; This is  the default value (milliseconds)
 #MaxHotkeysPerInterval 2000
 
-TESTING_OUTSIDE_GAME:=1
+TESTING_OUTSIDE_GAME:=0
 
-#If !TESTING_OUTSIDE_GAME
 ; We always want numlock on
 SetNumLockState, AlwaysOn
 
 ; Maybe need this?
-$*NumLock::
-	Send, {AUTORUN KEY}
+;$*NumLock::
+;	Send, {AUTORUN KEY}
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -32,14 +31,6 @@ $*LAlt::
 	return
 $*LCtrl::
 	return
-
-; Alt+Escape can cause the game to minimize, but the game needs escape to be sent.
-; So, we block escape's keypress in general but send an unmodified escape too
-$*Escape::
-	Send, {Escape}
-	return
-
-#If ; !TESTING_OUTSIDE_GAME
 
 ; Putting each binding that's complex at all in functions, so we can ask for global namespace
 hk_wheel_down()
@@ -57,12 +48,50 @@ hk_wheel_up()
 	equip_2h()
 }
 
-hk_wheel_press()
+hk_mbutton()
 {
 	global
-	; staff
-	equip_staff()
+	state := lmod_state()
+	; Holding alt makes the wheel act normally
+	if ((state & MOD_LALT) != 0)
+	{
+		equip_bow()
+	}
+	else
+	{
+		equip_staff()
+	}
 }
 
 
+; No $; game doesn't get this 
+*WheelDown::
+	state := lmod_state()
+	; Holding alt makes the wheel act normally
+	if ((state & MOD_LALT) != 0)
+	{
+		var_send(key_string("WheelDown"))
+	}
+	else
+	{
+		hk_wheel_down()
+	}
+	return
+; No $; game doesn't get this 
+*WheelUp::
+	state := lmod_state()
+	; Holding alt makes the wheel act normally
+	if ((state & MOD_LALT) != 0)
+	{
+		var_send(key_string("WheelUp"))
+	}
+	else
+	{
+		hk_wheel_up()
+	}
+	return
+; No $; game doesn't get this 
+*MButton::
+	hk_mbutton()	
+	return
 
