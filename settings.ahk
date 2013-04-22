@@ -47,17 +47,11 @@ get_quick_item_key(slot,ByRef rmods_out)
 	; return the key to press
 	return numpad_key(slot)
 }
-
-radial_menu_key(is_right)
+; Which key selects the radial as the current one?
+get_radial_menu_key(is_right, ByRef rmods_out)
 {
 	key := ((is_right)?("e"):("q"))
+	rmods_out := MOD_NONE
 	return key
 }
-; not generic!
-radial_menu(is_right)
-{
-	global
-	key := radial_menu_key(is_right)
-	passthru(key)
-	CURRENT_RADIAL := is_right
-}
+

@@ -72,15 +72,33 @@ MOD_LWIN   := (1 << 7)
 MOD_LEFT   := MOD_LSHIFT|MOD_LCTRL|MOD_LALT|MOD_LWIN 
 MOD_RIGHT  := MOD_RCTRL|MOD_RALT|MOD_RWIN 
 MOD_ALL    := MOD_LEFT|MOD_RIGHT
+MOD_NONE   := 0
 
 ; Identifiers for weapons that are selected
-; TODO: will we need two 2h weapons to be viable in this too?  if so, enhancement will be needed
 WEAP_STAFF := 0
 WEAP_BOW := 1
 WEAP_2H := 2
 WEAP_1H := 3
 
 CURRENT_WEAPON := 0
+
+; Indicates if the current weapon is a melee weapon or not
+is_melee()
+{
+	global
+	if ((CURRENT_WEAPON = WEAP_2H) || (CURRENT_WEAPON = WEAP_1H))
+	{
+		return true
+	}
+	return false
+}
+
+is_key_down(key)
+{
+	if ( GetKeyState(key, "P") = 1 )
+		return true
+	return false
+}
 
 ; Converts individual mod flags to their key names
 mod_to_key(flag)
@@ -106,7 +124,7 @@ mod_to_key(flag)
 mod_state(flag)
 {
 	global
-	return cond_flag(flag,GetKeyState(mod_to_key(flag),"P"))
+	return cond_flag(flag,is_key_down(mod_to_key(flag)))
 }
 ; The state of the left modifier keys
 lmod_state()
@@ -229,6 +247,18 @@ get_right_radial_skill_press_str(slot,ByRef down_str_out,ByRef up_str_out)
 {
 	get_radial_skill_press_str(1,slot,down_str_out,up_str_out)
 }
+
+; Radial menu selection; 
+radial_menu(is_right)
+{
+	global
+	; Initial rmods; may be changed by get_radial_key()
+	rmods := 0
+	key := get_radial_menu_key(is_right,rmods)
+	send_rmod_press(key,rmods)
+	; current radial changed
+	CURRENT_RADIAL := is_right
+}
 ; Sends the keypress returned by get_radial_skill_press_str
 radial_skill(is_right,slot)
 {
@@ -318,7 +348,7 @@ remap_passthru(key,newkey)
 	Send, {%newkey% Down}
 	Send, {%key% Down}
 	KeyWait %key%
-	if ( GetKeyState("LShift", "P") = 1 )
+	if ( is_key_down("LShift") = 1 )
 	{
 		Send, {RShift Down}
 		Send, {%key% Up}

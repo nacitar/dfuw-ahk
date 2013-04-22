@@ -81,7 +81,7 @@ current_radial_attack(state)
 }
 *q::
 	state := lmod_state()
-	; TODO: what am i doing here?
+	; TODO: what am I doing here?
 	if ((state & MOD_LALT) != 0)
 	{
 		; Holding alt makes the wheel act normally
@@ -167,7 +167,7 @@ RBUTTON_WAS_PLAIN:=0
 	{
 		right_radial_skill(5)
 	}
-	else if ( CURRENT_WEAPON = WEAP_1H )
+	else if ( is_melee() )
 	{
 		Send, {v down}
 	}
