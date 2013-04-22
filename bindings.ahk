@@ -37,7 +37,7 @@ hk_wheel_down()
 {
 	global
 	; sword and board
-	equip_1h_shield()
+	equip_1h()
 }
 
 ; Select 2h

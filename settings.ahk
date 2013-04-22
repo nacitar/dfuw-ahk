@@ -4,9 +4,6 @@
 ;; REQUIRED STUFF 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; How long to wait before equipping a shield, to avoid paperdoll lock
-SHIELD_DELAY_MS := 500
-
 CURRENT_RADIAL := 0
 
 ; Get the quick item slot for the weapon
@@ -21,8 +18,6 @@ get_weapon_slot(weap)
 		return 3
 	if (weap = WEAP_1H)
 		return 4
-	if (weap = WEAP_SHIELD)
-		return 5
 	return 0
 }
 

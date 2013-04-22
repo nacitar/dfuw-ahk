@@ -79,7 +79,6 @@ WEAP_STAFF := 0
 WEAP_BOW := 1
 WEAP_2H := 2
 WEAP_1H := 3
-WEAP_SHIELD := 4
 
 CURRENT_WEAPON := 0
 
@@ -294,30 +293,6 @@ equip_1h()
 	quick_item(get_weapon_slot(WEAP_1H))
 	CURRENT_WEAPON := WEAP_1H
 }
-equip_shield()
-{
-	; Due to paperdoll locking, we need a timer for equipping a shield after a 1H
-	; This label lets us jump into this function from the timer
-	equipshield_callback:
-	global
-	SetTimer, equipshield_callback, Off
-	quick_item(get_weapon_slot(WEAP_SHIELD))
-
-	; Need an explicit return to make the timer callback happy
-	return
-}
-equip_shield_delayed()
-{
-	global
-	SetTimer, equipshield_callback, Off
-	SetTimer, equipshield_callback, %SHIELD_DELAY_MS%
-}
-equip_1h_shield()
-{
-	equip_1h()
-	equip_shield_delayed()
-}
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keymapping functions 
