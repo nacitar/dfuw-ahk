@@ -81,6 +81,8 @@ WEAP_2H := 2
 WEAP_1H := 3
 WEAP_SHIELD := 4
 
+CURRENT_WEAPON := 0
+
 ; Converts individual mod flags to their key names
 mod_to_key(flag)
 {
@@ -234,6 +236,7 @@ radial_skill(is_right,slot)
 	down_str := ""
 	up_str := ""
 	get_radial_skill_press_str(is_right,slot,down_str,up_str)
+	radial_menu(is_right)
 	send_press(down_str,up_str)
 }
 left_radial_skill(slot)
@@ -271,21 +274,25 @@ equip_staff()
 {
 	global
 	quick_item(get_weapon_slot(WEAP_STAFF))
+	CURRENT_WEAPON := WEAP_STAFF
 }
 equip_bow()
 {
 	global
 	quick_item(get_weapon_slot(WEAP_BOW))
+	CURRENT_WEAPON := WEAP_BOW
 }
 equip_2h()
 {
 	global
 	quick_item(get_weapon_slot(WEAP_2H))
+	CURRENT_WEAPON := WEAP_2H
 }
 equip_1h()
 {
 	global
 	quick_item(get_weapon_slot(WEAP_1H))
+	CURRENT_WEAPON := WEAP_1H
 }
 equip_shield()
 {

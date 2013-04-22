@@ -7,6 +7,8 @@
 ; How long to wait before equipping a shield, to avoid paperdoll lock
 SHIELD_DELAY_MS := 500
 
+CURRENT_RADIAL := 0
+
 ; Get the quick item slot for the weapon
 get_weapon_slot(weap)
 {
@@ -51,3 +53,16 @@ get_quick_item_key(slot,ByRef rmods_out)
 	return numpad_key(slot)
 }
 
+radial_menu_key(is_right)
+{
+	key := ((is_right)?("e"):("q"))
+	return key
+}
+; not generic!
+radial_menu(is_right)
+{
+	global
+	key := radial_menu_key(is_right)
+	passthru(key)
+	CURRENT_RADIAL := is_right
+}

@@ -1,4 +1,4 @@
-#IfWinActive, Darkfall Online
+#IfWinActive, Darkfall Unholy Wars
 #SingleInstance force
 #NoEnv
 
@@ -63,37 +63,59 @@ hk_mbutton()
 	}
 }
 
-; not generic!
-radial_menu(is_right)
+clear_skill()
+{
+	send_press("{`` down}","{`` up}")
+}
+
+attack_string(radial,state)
+{
+	key:=((radial)?("Numpad0"):("AppsKey"))
+	return keypress_string(key,state)
+}
+
+current_radial_attack(state)
 {
 	global
-	key := ((is_right)?("e"):("q"))
+	return attack_string(CURRENT_RADIAL,state)
+}
+*q::
 	state := lmod_state()
-	; Holding alt makes the wheel act normally
+	; TODO: what am i doing here?
 	if ((state & MOD_LALT) != 0)
 	{
+		; Holding alt makes the wheel act normally
 		send_rmod_hold(key,MOD_RALT,key)
 	}
 	else if ((state & MOD_LCTRL) != 0)
 	{
+		; open the radial menus?
 		send_rmod_hold(key,MOD_RCTRL,key)
 	}
 	else
 	{
-		passthru(key)
-		return 0
+		radial_menu(0)
 	}
-	return 1
-}
-*q::
-	radial_menu(0)
 	return
 *e::
 	radial_menu(1)
 	return
 
+*0::
+	state := lmod_state()
+	if ((state & MOD_LALT) = MOD_LALT)
+	{
+		quick_item(7)
+	}
+	else
+	{
+		passthru(0)
+	}
+	return
+
 $*XButton1::
-	; nothing yet
+	; heal self
+	left_radial_skill(8)
 	return
 
 $*XButton2::
@@ -123,10 +145,53 @@ $*`::
 		; skinning knife
 		quick_item(8)
 	}
+	if ((state & MOD_LCTRL) = MOD_LCTRL)
+	{
+		; heal mount
+		right_radial_skill(1)
+	}
+	else
+	{
+		clear_skill()
+	}
 	return
 
 
 LBUTTON_WAS_PLAIN:=0
+RBUTTON_WAS_PLAIN:=0
+
+; rebout right actiont rigger to Numpad0
+*RButton::
+	RBUTTON_WAS_PLAIN:=0
+	if ( CURRENT_WEAPON = WEAP_BOW )
+	{
+		right_radial_skill(5)
+	}
+	else if ( CURRENT_WEAPON = WEAP_1H )
+	{
+		Send, {v down}
+	}
+	else
+	{
+		Send, {Numpad0 down}
+		Send, {RButton down}
+		RBUTTON_WAS_PLAIN := 1
+	}
+	return
+
+*RButton up::
+	Send, {RButton up}
+	Send, {Numpad0 up}
+	Send, {v up}
+	if (RBUTTON_WAS_PLAIN)
+	{
+		clear_skill()
+	}
+	return
+
+
+		
+
 ; rebound left action trigger to APPS
 *LButton::
 	LBUTTON_WAS_PLAIN:=0
@@ -148,7 +213,8 @@ LBUTTON_WAS_PLAIN:=0
 	}
 	else
 	{
-		Send, {AppsKey down}
+		var_send(current_radial_attack(1))
+		;Send, {AppsKey down}
 		Send, {LButton down}
 		LBUTTON_WAS_PLAIN := 1
 	}
@@ -156,11 +222,11 @@ LBUTTON_WAS_PLAIN:=0
 
 *LButton up::
 	Send, {LButton up}
-	Send, {AppsKey up}
+	;Send, {AppsKey up}
+	var_send(current_radial_attack(0))
 	if (LBUTTON_WAS_PLAIN)
 	{
-		; clear skill
-		send_press("{`` down}","{`` up}")
+		clear_skill()
 	}
 	return
 ; No $; game doesn't get this 
