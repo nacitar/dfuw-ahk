@@ -164,7 +164,11 @@ class KeySeqObject {
     }
   }
   emit() {
-    var_send(this.cmd)
+    if (this.cmd = "") {
+      raise_exception("Emitting empty KeySeq()!  Forget to set Binding?")
+    } else {
+      var_send(this.cmd)
+    }
   }
 }
 ; Wrapper for object creation
@@ -270,17 +274,21 @@ class BindingObject {
     down_state_array := []
     up_state_array := []
 
-    up_state_array.Insert(KeyState(key,KeyPosition.UP))
+    ; If this isn't a dummy binding
+    if (key != -1)
+    {
+      up_state_array.Insert(KeyState(key,KeyPosition.UP))
 
-    Loop, % mod_key_array.MaxIndex() {
-      mod_key := mod_key_array[A_Index]
-      down_state_array.Insert(KeyState(mod_key,KeyPosition.DOWN))
-      ; 1 is first index, so this puts modifiers releases
-      ; after the key up, but in reverse order.
-      up_state_array.Insert(2,KeyState(mod_key,KeyPosition.UP))
+      Loop, % mod_key_array.MaxIndex() {
+        mod_key := mod_key_array[A_Index]
+        down_state_array.Insert(KeyState(mod_key,KeyPosition.DOWN))
+        ; 1 is first index, so this puts modifiers releases
+        ; after the key up, but in reverse order.
+        up_state_array.Insert(2,KeyState(mod_key,KeyPosition.UP))
+      }
+
+      down_state_array.Insert(KeyState(key,KeyPosition.DOWN))
     }
-
-    down_state_array.Insert(KeyState(key,KeyPosition.DOWN))
 
     ; Now that we have the arrays, we can make sequences with them
     this.down := KeySeq(down_state_array)
@@ -295,14 +303,160 @@ class BindingObject {
     this.up.emit()
   }
 }
-Binding(key,mod_key_array=-1) {
+Binding(key=-1,mod_key_array=-1) {
+  if (key != -1) {
+    key := validate_key_arg("Binding()",key)
+  }
   if (mod_key_array = -1) {
     mod_key_array := []
   }
-
-  key := validate_key_arg("Binding()",key)
   mod_key_array := make_array(mod_key_array)
   return new BindingObject(key,mod_key_array)
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Darkfall Unholy Wars 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+class Radial
+{
+  ; Stores the currently selected radial 
+  static CURRENT := 0
+  ; Stores the radial of the most recently selected skill
+  static LAST := 0
+
+  ; enum
+  static LEFT := 0
+  static RIGHT := 1
+}
+
+
+class Weapon
+{
+  ; Stores the currently equipped weapon
+  static CURRENT := 1
+
+  ; enum
+  static ONE_HANDED := 1
+  static TWO_HANDED := 2
+  static STAFF := 3
+  static BOW := 4
+
+  ; methods mostly for convenience
+  isOneHanded() {
+    return (Weapon.CURRENT = Weapon.ONE_HANDED)
+  }
+  isTwoHanded() {
+    return (Weapon.CURRENT = Weapon.TWO_HANDED)
+  }
+  isBow() {
+    return (Weapon.CURRENT = Weapon.BOW)
+  }
+  isStaff() {
+    return (Weapon.CURRENT = Weapon.STAFF)
+  }
+  ; 1h or 2h
+  isMelee() {
+    return (Weapon.isOneHanded() || Weapon.isTwoHanded())
+  }
+}
+
+; Create dummy hotkeys for known functions we are writing scripts for; this
+; means if a user fails to redefine these to real hotkeys, trying to .emit()
+; them will result in an error about emitting an empty KeySeq (good!) instead
+; of giving no error at all and silently doing nothing (bad!)
+bind_LeftRadial := Binding()
+bind_RightRadial := Binding()
+
+bind_QuickItem := []
+bind_QuickItem[1] := Binding()
+bind_QuickItem[2] := Binding()
+bind_QuickItem[3] := Binding()
+bind_QuickItem[4] := Binding()
+bind_QuickItem[5] := Binding()
+bind_QuickItem[6] := Binding()
+bind_QuickItem[7] := Binding()
+bind_QuickItem[8] := Binding()
+
+bind_LeftRadialSkill := []
+bind_LeftRadialSkill[1] := Binding()
+bind_LeftRadialSkill[2] := Binding()
+bind_LeftRadialSkill[3] := Binding()
+bind_LeftRadialSkill[4] := Binding()
+bind_LeftRadialSkill[5] := Binding()
+bind_LeftRadialSkill[6] := Binding()
+bind_LeftRadialSkill[7] := Binding()
+bind_LeftRadialSkill[8] := Binding()
+
+bind_RightRadialSkill := []
+bind_RightRadialSkill[1] := Binding()
+bind_RightRadialSkill[2] := Binding()
+bind_RightRadialSkill[3] := Binding()
+bind_RightRadialSkill[4] := Binding()
+bind_RightRadialSkill[5] := Binding()
+bind_RightRadialSkill[6] := Binding()
+bind_RightRadialSkill[7] := Binding()
+bind_RightRadialSkill[8] := Binding()
+
+; Dummy weapon slots, if using setQuickItem(), this index would cause an error
+index_WeaponSlot := []
+index_WeaponSlot[Weapon.ONE_HANDED] := 0
+index_WeaponSlot[Weapon.TWO_HANDED] := 0
+index_WeaponSlot[Weapon.STAFF] := 0
+index_WeaponSlot[Weapon.BOW] := 0
+
+; Selects the requested radial skill, storing this radial
+; side as the one last used.
+setRadialSkill(radial,slot) {
+  global
+  Radial.LAST := radial
+  if (radial = Radial.RIGHT) {
+    bind_RightRadialSkill.emit()
+  } else {
+    bind_LeftRadialSkill.emit()
+  }
+}
+
+; Selects the current radial, storing this information
+setRadial(radial) {
+  global
+  Radial.CURRENT := radial
+  if (radial = Radial.RIGHT) {
+    bind_RightRadial.emit()
+  } else {
+    bind_LeftRadial.emit()
+  }
+}
+
+; Selects the desired quick item; does not take into account if this is a
+; weapon; this is intentional, it allows custom things in scripts.
+setQuickItem(index) {
+  global
+  if (index > 0 && index <= 8) {
+    bind_QuickItem[index].emit()
+  } else {
+    raise_exception("Quick item index must be 1-8.  Forget to set indexes?")
+  }
+}
+
+; Nothing more than
+setWeapon(weap) {
+  global
+  Weapon.CURRENT := weap
+  setQuickItem(index_WeaponSlot[weap])
+}
+
+isMelee()
+{
+  global
+  return (   CURRENT_WEAPON = Weapon.ONE_HANDED
+          || CURRENT_WEAPON = Weapon.TWO_HANDED)
+}
+isArchery()
+{
+  global
+  return (CURRENT_WEAPON = Weapon.BOW)
 }
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -317,7 +471,6 @@ Binding(key,mod_key_array=-1) {
 bind_LeftRadial := Binding("q")
 bind_RightRadial := Binding("e")
 
-bind_QuickItem := []
 bind_QuickItem[1] := Binding("Numpad1")
 bind_QuickItem[2] := Binding("Numpad2")
 bind_QuickItem[3] := Binding("Numpad3")
@@ -328,40 +481,24 @@ bind_QuickItem[7] := Binding("Numpad7")
 bind_QuickItem[8] := Binding("Numpad8")
 
 ; Change left radial bindings to RALT + numpad keys
-bind_LeftRadial := []
-bind_LeftRadial[1] := Binding("Numpad1",Keyboard.RALT)
-bind_LeftRadial[2] := Binding("Numpad2",Keyboard.RALT)
-bind_LeftRadial[3] := Binding("Numpad3",Keyboard.RALT)
-bind_LeftRadial[4] := Binding("Numpad4",Keyboard.RALT)
-bind_LeftRadial[5] := Binding("Numpad5",Keyboard.RALT)
-bind_LeftRadial[6] := Binding("Numpad6",Keyboard.RALT)
-bind_LeftRadial[7] := Binding("Numpad7",Keyboard.RALT)
-bind_LeftRadial[8] := Binding("Numpad8",Keyboard.RALT)
+bind_LeftRadialSkill[1] := Binding("Numpad1",Keyboard.RALT)
+bind_LeftRadialSkill[2] := Binding("Numpad2",Keyboard.RALT)
+bind_LeftRadialSkill[3] := Binding("Numpad3",Keyboard.RALT)
+bind_LeftRadialSkill[4] := Binding("Numpad4",Keyboard.RALT)
+bind_LeftRadialSkill[5] := Binding("Numpad5",Keyboard.RALT)
+bind_LeftRadialSkill[6] := Binding("Numpad6",Keyboard.RALT)
+bind_LeftRadialSkill[7] := Binding("Numpad7",Keyboard.RALT)
+bind_LeftRadialSkill[8] := Binding("Numpad8",Keyboard.RALT)
 
 ; Change right radial bindings to RCTRL + numpad keys
-bind_RightRadial[1] := Binding("Numpad1",Keyboard.RCTRL)
-bind_RightRadial[2] := Binding("Numpad2",Keyboard.RCTRL)
-bind_RightRadial[3] := Binding("Numpad3",Keyboard.RCTRL)
-bind_RightRadial[4] := Binding("Numpad4",Keyboard.RCTRL)
-bind_RightRadial[5] := Binding("Numpad5",Keyboard.RCTRL)
-bind_RightRadial[6] := Binding("Numpad6",Keyboard.RCTRL)
-bind_RightRadial[7] := Binding("Numpad7",Keyboard.RCTRL)
-bind_RightRadial[8] := Binding("Numpad8",Keyboard.RCTRL)
-
-class Radial
-{
-  static LEFT := 0
-  static RIGHT := 1
-}
-
-
-class Weapon
-{
-  static ONE_HANDED := 1
-  static TWO_HANDED := 2
-  static STAFF := 3
-  static BOW := 4
-}
+bind_RightRadialSkill[1] := Binding("Numpad1",Keyboard.RCTRL)
+bind_RightRadialSkill[2] := Binding("Numpad2",Keyboard.RCTRL)
+bind_RightRadialSkill[3] := Binding("Numpad3",Keyboard.RCTRL)
+bind_RightRadialSkill[4] := Binding("Numpad4",Keyboard.RCTRL)
+bind_RightRadialSkill[5] := Binding("Numpad5",Keyboard.RCTRL)
+bind_RightRadialSkill[6] := Binding("Numpad6",Keyboard.RCTRL)
+bind_RightRadialSkill[7] := Binding("Numpad7",Keyboard.RCTRL)
+bind_RightRadialSkill[8] := Binding("Numpad8",Keyboard.RCTRL)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User Script - Aliases
