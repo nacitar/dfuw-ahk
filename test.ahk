@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Jacob McIntosh <nacitar at ubercpp dot com> 
+ * Copyright (C) 2013 Jacob McIntosh (nacitar sevaht) <nacitar at ubercpp.com> 
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
