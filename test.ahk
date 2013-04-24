@@ -39,7 +39,6 @@ var_msgbox(value) {
   MsgBox, %value%
 }
 
-
 ; Sanely convert integers to strings so they can be appended to strings
 to_string(num) {
   return %num%
@@ -51,19 +50,13 @@ raise_exception(text) {
   var_msgbox(msg)
   ExitApp, 1
 }
-; somewhat hackish way to determine if a value is an array
-is_array(obj) {
-  if ((IsObject(obj)) && (is_class(obj,""))) {
-    return true
-  }
-  return false
-}
 ; Determine if an object is of a particular class type
 is_class(obj,type_name) {
-  if (obj.__Class = type_name) {
-    return true
-  }
-  return false
+  return (obj.__Class = type_name)
+}
+; somewhat hackish way to determine if a value is an array
+is_array(obj) {
+  return  (IsObject(obj) && is_class(obj,""))
 }
 ; validates an array argument; makes it into an array if it isn't one
 make_array(obj) {
@@ -109,17 +102,11 @@ class KeyObject {
 
   ; Returns 1 if the button is down, 0 otherwise
   isDown() {
-    if (this.position() = KeyPosition.DOWN) {
-      return 1
-    }
-    return 0
+    return (this.position() = KeyPosition.DOWN)
   }
   ; Equivalence
   equals(other) {
-    if (this.name = other.name) {
-      return true
-    }
-    return false
+    return (this.name = other.name)
   }
 }
 ; Wrapper for the object creation
@@ -148,10 +135,7 @@ class KeyStateObject {
   }
 
   equals(other) {
-    if ((this.key.equals(other.key)) && (this.position = other.position)) {
-      return true
-    }
-    return false
+    return (this.key.equals(other.key) && this.position = other.position)
   }
 }
 
@@ -405,11 +389,13 @@ CURRENT_WEAPON := Weapon.TWO_HANDED
 isMelee()
 {
   global
-  if (   (CURRENT_WEAPON = Weapon.ONE_HANDED)
-      || (CURRENT_WEAPON == Weapon.TWO_HANDED)) {
-    return true
-  }
-  return false
+  return (   CURRENT_WEAPON = Weapon.ONE_HANDED
+          || CURRENT_WEAPON = Weapon.TWO_HANDED)
+}
+isArchery()
+{
+  global
+  return (CURRENT_WEAPON = Weapon.BOW)
 }
 setWeapon(weap)
 {
@@ -420,7 +406,7 @@ setWeapon(weap)
 
 *MButton::
   mods := Keyboard.downMods()
-  if (Keyboard.isDown([Keyboard.LALT])) {
+  if (Keyboard.isDown(Keyboard.LALT,mods)) {
     setWeapon(Weapon.BOW)
   } else {
     setWeapon(Weapon.STAFF)
