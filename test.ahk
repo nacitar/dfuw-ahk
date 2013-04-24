@@ -243,14 +243,13 @@ class Keyboard {
     return this.getDown(Keyboard.ALL_MODS)
   }
 
-  ; Returns true if all keys in key_array are down.  If down_key_array is specified, it
-  ; is used as the list of all down keys instead of physical state.  This lets you
-  ; take snapshots of the state and compare against them
+  ; Returns true if all keys in key_array are down.  If down_key_array is
+  ; specified, it is used as the list of all down keys instead of physical
+  ; state.  This lets you take snapshots of the state and compare against them.
   isDown(key_array,down_key_array=-1) {
     if (down_key_array = -1) {
       down_key_array := this.getDown(key_array)
     }
-    ; TODO: accept key names
     key_array := make_array(key_array)
 
     down_key_array := make_array(down_key_array)
@@ -258,11 +257,14 @@ class Keyboard {
 
     Loop, % key_array.MaxIndex() {
       key := key_array[A_Index]
+      key := validate_key_arg("Keyboard.isDown()",key)
 
       found := 0
       ; loop through the set keys
       Loop, % down_key_array.MaxIndex() {
-        if (key.equals(down_key_array[A_Index])) {
+        down_key := down_key_array[A_Index]
+        down_key := validate_key_arg("Keyboard.isDown()",down_key)
+        if (key.equals(down_key)) {
           found := 1
           break
         }
@@ -289,7 +291,8 @@ class BindingObject {
     Loop, % mod_key_array.MaxIndex() {
       mod_key := mod_key_array[A_Index]
       down_state_array.Insert(KeyState(mod_key,KeyPosition.DOWN))
-      ; 1 is first index, this puts modifiers after the key up, in reverse order
+      ; 1 is first index, so this puts modifiers releases
+      ; after the key up, but in reverse order.
       up_state_array.Insert(2,KeyState(mod_key,KeyPosition.UP))
     }
 
