@@ -16,6 +16,15 @@
 
 ; NOTE: Autohotkey has a bug to do with not releasing RSHIFT when told to do an up event
 
+#IfWinActive, Darkfall Unholy Wars
+#SingleInstance force
+#NoEnv
+
+#Include %A_ScriptDir% ; Change the working dir for #include commands
+
+#HotkeyInterval 1  ; This is  the default value (milliseconds)
+#MaxHotkeysPerInterval 2000
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Autohotkey supplements
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -48,7 +57,7 @@ raise_exception(text)
 ; somewhat hackish way to determine if a value is an array
 is_array(obj)
 {
-	if (IsObject(obj))
+	if ((IsObject(obj)) && (is_class(obj,"")))
 	{
 		return true
 	}
@@ -72,6 +81,7 @@ make_array(obj)
 	}
 	return obj
 }
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keyboard Input Model
@@ -268,16 +278,21 @@ class Keyboard
 	; take snapshots of the state and compare against them
 	isDown(key_array,down_key_array=-1)
 	{
+		
 		if (down_key_array = -1)
 		{
 			down_key_array := this.getDown(key_array)
 		}
+		; TODO: accept key names
 		key_array := make_array(key_array)
+
 		down_key_array := make_array(down_key_array)
 		; loop through the keys to check
+
 		Loop, % key_array.MaxIndex()
 		{
 			key := key_array[A_Index]
+
 			found := 0
 			; loop through the set keys
 			Loop, % down_key_array.MaxIndex()
@@ -346,7 +361,6 @@ Binding(key,mod_key_array=-1)
 	return new BindingObject(key,mod_key_array)
 }
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User Script - Key Bindings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -396,14 +410,25 @@ class Radial
 	static RIGHT := 1
 }
 
+
+class Weapon
+{
+	static ONE_HANDED := 1
+	static TWO_HANDED := 2
+	static STAFF := 3
+	static BOW := 4
+}
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User Script - Aliases
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-bind_Staff := bind_QuickItem[1]
-bind_Bow := bind_QuickItem[2]
-bind_2H := bind_QuickItem[3]
-bind_1H := bind_QuickItem[4]
+bind_Weapon := []
+bind_Weapon[Weapon.STAFF]      :=  bind_QuickItem[1]
+bind_Weapon[Weapon.BOW]        :=  bind_QuickItem[2]
+bind_Weapon[Weapon.TWO_HANDED] :=  bind_QuickItem[3]
+bind_Weapon[Weapon.ONE_HANDED] :=  bind_QuickItem[4]
+
 bind_Mount := bind_QuickItem[7]
 bind_Skinner := bind_QuickItem[8]
 
@@ -415,3 +440,42 @@ bind_Puncture := bind_LeftRadial[3]
 ;; User Script - Logic
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+CURRENT_WEAPON := Weapon.TWO_HANDED
+
+isMelee()
+{
+	global
+	if ((CURRENT_WEAPON = Weapon.ONE_HANDED) || (CURRENT_WEAPON == Weapon.TWO_HANDED))
+	{
+		return true
+	}
+	return false
+}
+setWeapon(weap)
+{
+	global
+	CURRENT_WEAPON := weap
+	bind_Weapon[weap].emit()
+}
+
+
+*MButton::
+	mods := Keyboard.downMods()
+	if (Keyboard.isDown([Keyboard.LALT]))
+	{
+		setWeapon(Weapon.BOW)
+	}
+	else
+	{
+		setWeapon(Weapon.STAFF)
+	}
+	return
+		
+*WheelUp::
+	setWeapon(Weapon.TWO_HANDED)
+	return
+
+*WheelDown::
+	setWeapon(Weapon.ONE_HANDED)
+	return
+	
