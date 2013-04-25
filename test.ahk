@@ -319,16 +319,84 @@ Binding(key=-1,mod_key_array=-1) {
 ;; Darkfall Unholy Wars 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+class WeaponType { ; enum
+  static ONE_HANDED := 1
+  static TWO_HANDED := 2
+  static STAFF := 3
+  static BOW := 4
+}
+class RadialType { ; enum
+  static LEFT := 1
+  static RIGHT := 2
+}
+; Stores game bindings
+class Game
+{
+  static QuickItem := []
+  static Radial := []
+  static RadialSkill := [ [], [] ] ; [RadialType][number]
+  static WeaponSlot := []
+
+}
+; Create dummy hotkeys for known functions we are writing scripts for; this
+; means if a user fails to redefine these to real hotkeys, trying to .emit()
+; them will result in an error about emitting an empty KeySeq (good!) instead
+; of giving no error at all and silently doing nothing (bad!)
+Game.QuickItem[1] := Binding()
+Game.QuickItem[2] := Binding()
+Game.QuickItem[3] := Binding()
+Game.QuickItem[4] := Binding()
+Game.QuickItem[5] := Binding()
+Game.QuickItem[6] := Binding()
+Game.QuickItem[7] := Binding()
+Game.QuickItem[8] := Binding()
+Game.Radial[RadialType.LEFT] := Binding()
+Game.Radial[RadialType.RIGHT] := Binding()
+Game.RadialSkill[RadialType.LEFT][1] := Binding()
+Game.RadialSkill[RadialType.LEFT][2] := Binding()
+Game.RadialSkill[RadialType.LEFT][3] := Binding()
+Game.RadialSkill[RadialType.LEFT][4] := Binding()
+Game.RadialSkill[RadialType.LEFT][5] := Binding()
+Game.RadialSkill[RadialType.LEFT][6] := Binding()
+Game.RadialSkill[RadialType.LEFT][7] := Binding()
+Game.RadialSkill[RadialType.LEFT][8] := Binding()
+Game.RadialSkill[RadialType.RIGHT][1] := Binding()
+Game.RadialSkill[RadialType.RIGHT][2] := Binding()
+Game.RadialSkill[RadialType.RIGHT][3] := Binding()
+Game.RadialSkill[RadialType.RIGHT][4] := Binding()
+Game.RadialSkill[RadialType.RIGHT][5] := Binding()
+Game.RadialSkill[RadialType.RIGHT][6] := Binding()
+Game.RadialSkill[RadialType.RIGHT][7] := Binding()
+Game.RadialSkill[RadialType.RIGHT][8] := Binding()
+; Dummy weapon slots, if using setQuickItem(), this index causes an error
+Game.WeaponSlot[WeaponType.ONE_HANDED] := 0
+Game.WeaponSlot[WeaponType.TWO_HANDED] := 0
+Game.WeaponSlot[WeaponType.STAFF] := 0
+Game.WeaponSlot[WeaponType.BOW] := 0
+
 class Radial
 {
   ; Stores the currently selected radial 
   static CURRENT := 0
   ; Stores the radial of the most recently selected skill
   static LAST := 0
+  ; Stores the last skill known to be selected on a given radial
+  static LAST_SKILL := [ 0, 0 ]
 
-  ; enum
-  static LEFT := 0
-  static RIGHT := 1
+  set(radial_type) {
+    Radial.CURRENT := radial_type
+    Game.Radial[radial_type].emit()
+  }
+
+  skill(radial_type,number) {
+    if (number > 0 && number <= 8) {
+      Radial.LAST := radial_type
+      Radial.LAST_SKILL[radial_type] := number
+      Game.RadialSkill[radial_type][number].emit()
+    } else {
+      raise_exception("Radial skill must be 1-8.  Forget to set WeaponSlots?")
+    }
+  }
 }
 
 
@@ -337,127 +405,30 @@ class Weapon
   ; Stores the currently equipped weapon
   static CURRENT := 1
 
-  ; enum
-  static ONE_HANDED := 1
-  static TWO_HANDED := 2
-  static STAFF := 3
-  static BOW := 4
-
   ; methods mostly for convenience
   isOneHanded() {
-    return (Weapon.CURRENT = Weapon.ONE_HANDED)
+    return (Weapon.CURRENT = WeaponType.ONE_HANDED)
   }
   isTwoHanded() {
-    return (Weapon.CURRENT = Weapon.TWO_HANDED)
+    return (Weapon.CURRENT = WeaponType.TWO_HANDED)
   }
   isBow() {
-    return (Weapon.CURRENT = Weapon.BOW)
+    return (Weapon.CURRENT = WeaponType.BOW)
   }
   isStaff() {
-    return (Weapon.CURRENT = Weapon.STAFF)
+    return (Weapon.CURRENT = WeaponType.STAFF)
   }
   ; 1h or 2h
   isMelee() {
     return (Weapon.isOneHanded() || Weapon.isTwoHanded())
   }
-}
 
-; Create dummy hotkeys for known functions we are writing scripts for; this
-; means if a user fails to redefine these to real hotkeys, trying to .emit()
-; them will result in an error about emitting an empty KeySeq (good!) instead
-; of giving no error at all and silently doing nothing (bad!)
-bind_LeftRadial := Binding()
-bind_RightRadial := Binding()
-
-bind_QuickItem := []
-bind_QuickItem[1] := Binding()
-bind_QuickItem[2] := Binding()
-bind_QuickItem[3] := Binding()
-bind_QuickItem[4] := Binding()
-bind_QuickItem[5] := Binding()
-bind_QuickItem[6] := Binding()
-bind_QuickItem[7] := Binding()
-bind_QuickItem[8] := Binding()
-
-bind_LeftRadialSkill := []
-bind_LeftRadialSkill[1] := Binding()
-bind_LeftRadialSkill[2] := Binding()
-bind_LeftRadialSkill[3] := Binding()
-bind_LeftRadialSkill[4] := Binding()
-bind_LeftRadialSkill[5] := Binding()
-bind_LeftRadialSkill[6] := Binding()
-bind_LeftRadialSkill[7] := Binding()
-bind_LeftRadialSkill[8] := Binding()
-
-bind_RightRadialSkill := []
-bind_RightRadialSkill[1] := Binding()
-bind_RightRadialSkill[2] := Binding()
-bind_RightRadialSkill[3] := Binding()
-bind_RightRadialSkill[4] := Binding()
-bind_RightRadialSkill[5] := Binding()
-bind_RightRadialSkill[6] := Binding()
-bind_RightRadialSkill[7] := Binding()
-bind_RightRadialSkill[8] := Binding()
-
-; Dummy weapon slots, if using setQuickItem(), this index would cause an error
-index_WeaponSlot := []
-index_WeaponSlot[Weapon.ONE_HANDED] := 0
-index_WeaponSlot[Weapon.TWO_HANDED] := 0
-index_WeaponSlot[Weapon.STAFF] := 0
-index_WeaponSlot[Weapon.BOW] := 0
-
-; Selects the requested radial skill, storing this radial
-; side as the one last used.
-setRadialSkill(radial,slot) {
-  global
-  Radial.LAST := radial
-  if (radial = Radial.RIGHT) {
-    bind_RightRadialSkill.emit()
-  } else {
-    bind_LeftRadialSkill.emit()
+  set(weapon_type) {
+    Weapon.CURRENT := weapon_type
+    Game.QuickItem[Game.WeaponSlot[weapon_type]].emit()
   }
 }
 
-; Selects the current radial, storing this information
-setRadial(radial) {
-  global
-  Radial.CURRENT := radial
-  if (radial = Radial.RIGHT) {
-    bind_RightRadial.emit()
-  } else {
-    bind_LeftRadial.emit()
-  }
-}
-
-; Selects the desired quick item; does not take into account if this is a
-; weapon; this is intentional, it allows custom things in scripts.
-setQuickItem(index) {
-  global
-  if (index > 0 && index <= 8) {
-    bind_QuickItem[index].emit()
-  } else {
-    raise_exception("Quick item index must be 1-8.  Forget to set indexes?")
-  }
-}
-
-; Nothing more than
-setWeapon(weap) {
-  global
-  Weapon.CURRENT := weap
-  setQuickItem(index_WeaponSlot[weap])
-}
-
-isMelee()
-{
-  global
-  return (   CURRENT_WEAPON = Weapon.ONE_HANDED
-          || CURRENT_WEAPON = Weapon.TWO_HANDED)
-}
-isArchery()
-{
-  global
-  return (CURRENT_WEAPON = Weapon.BOW)
-}
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User Script - Key Bindings
@@ -468,93 +439,65 @@ isArchery()
 ;var_msgbox(hkey.up.cmd)
 ;hkey.emit()
 
-bind_LeftRadial := Binding("q")
-bind_RightRadial := Binding("e")
+Game.Radial[RadialType.LEFT] := Binding("q")
+Game.Radial[RadialType.RIGHT] := Binding("e")
 
-bind_QuickItem[1] := Binding("Numpad1")
-bind_QuickItem[2] := Binding("Numpad2")
-bind_QuickItem[3] := Binding("Numpad3")
-bind_QuickItem[4] := Binding("Numpad4")
-bind_QuickItem[5] := Binding("Numpad5")
-bind_QuickItem[6] := Binding("Numpad6")
-bind_QuickItem[7] := Binding("Numpad7")
-bind_QuickItem[8] := Binding("Numpad8")
+Game.QuickItem[1] := Binding("Numpad1")
+Game.QuickItem[2] := Binding("Numpad2")
+Game.QuickItem[3] := Binding("Numpad3")
+Game.QuickItem[4] := Binding("Numpad4")
+Game.QuickItem[5] := Binding("Numpad5")
+Game.QuickItem[6] := Binding("Numpad6")
+Game.QuickItem[7] := Binding("Numpad7")
+Game.QuickItem[8] := Binding("Numpad8")
 
 ; Change left radial bindings to RALT + numpad keys
-bind_LeftRadialSkill[1] := Binding("Numpad1",Keyboard.RALT)
-bind_LeftRadialSkill[2] := Binding("Numpad2",Keyboard.RALT)
-bind_LeftRadialSkill[3] := Binding("Numpad3",Keyboard.RALT)
-bind_LeftRadialSkill[4] := Binding("Numpad4",Keyboard.RALT)
-bind_LeftRadialSkill[5] := Binding("Numpad5",Keyboard.RALT)
-bind_LeftRadialSkill[6] := Binding("Numpad6",Keyboard.RALT)
-bind_LeftRadialSkill[7] := Binding("Numpad7",Keyboard.RALT)
-bind_LeftRadialSkill[8] := Binding("Numpad8",Keyboard.RALT)
+Game.RadialSkill[RadialType.LEFT][1] := Binding("Numpad1",Keyboard.RALT)
+Game.RadialSkill[RadialType.LEFT][2] := Binding("Numpad2",Keyboard.RALT)
+Game.RadialSkill[RadialType.LEFT][3] := Binding("Numpad3",Keyboard.RALT)
+Game.RadialSkill[RadialType.LEFT][4] := Binding("Numpad4",Keyboard.RALT)
+Game.RadialSkill[RadialType.LEFT][5] := Binding("Numpad5",Keyboard.RALT)
+Game.RadialSkill[RadialType.LEFT][6] := Binding("Numpad6",Keyboard.RALT)
+Game.RadialSkill[RadialType.LEFT][7] := Binding("Numpad7",Keyboard.RALT)
+Game.RadialSkill[RadialType.LEFT][8] := Binding("Numpad8",Keyboard.RALT)
 
 ; Change right radial bindings to RCTRL + numpad keys
-bind_RightRadialSkill[1] := Binding("Numpad1",Keyboard.RCTRL)
-bind_RightRadialSkill[2] := Binding("Numpad2",Keyboard.RCTRL)
-bind_RightRadialSkill[3] := Binding("Numpad3",Keyboard.RCTRL)
-bind_RightRadialSkill[4] := Binding("Numpad4",Keyboard.RCTRL)
-bind_RightRadialSkill[5] := Binding("Numpad5",Keyboard.RCTRL)
-bind_RightRadialSkill[6] := Binding("Numpad6",Keyboard.RCTRL)
-bind_RightRadialSkill[7] := Binding("Numpad7",Keyboard.RCTRL)
-bind_RightRadialSkill[8] := Binding("Numpad8",Keyboard.RCTRL)
+Game.RadialSkill[RadialType.RIGHT][1] := Binding("Numpad1",Keyboard.RCTRL)
+Game.RadialSkill[RadialType.RIGHT][2] := Binding("Numpad2",Keyboard.RCTRL)
+Game.RadialSkill[RadialType.RIGHT][3] := Binding("Numpad3",Keyboard.RCTRL)
+Game.RadialSkill[RadialType.RIGHT][4] := Binding("Numpad4",Keyboard.RCTRL)
+Game.RadialSkill[RadialType.RIGHT][5] := Binding("Numpad5",Keyboard.RCTRL)
+Game.RadialSkill[RadialType.RIGHT][6] := Binding("Numpad6",Keyboard.RCTRL)
+Game.RadialSkill[RadialType.RIGHT][7] := Binding("Numpad7",Keyboard.RCTRL)
+Game.RadialSkill[RadialType.RIGHT][8] := Binding("Numpad8",Keyboard.RCTRL)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User Script - Aliases
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Game.WeaponSlot[WeaponType.STAFF] := 1
+Game.WeaponSlot[WeaponType.BOW] := 2
+Game.WeaponSlot[WeaponType.TWO_HANDED] := 3
+Game.WeaponSlot[WeaponType.ONE_HANDED] := 4
 
-bind_Weapon := []
-bind_Weapon[Weapon.STAFF]      :=  bind_QuickItem[1]
-bind_Weapon[Weapon.BOW]        :=  bind_QuickItem[2]
-bind_Weapon[Weapon.TWO_HANDED] :=  bind_QuickItem[3]
-bind_Weapon[Weapon.ONE_HANDED] :=  bind_QuickItem[4]
-
-bind_Mount := bind_QuickItem[7]
-bind_Skinner := bind_QuickItem[8]
-
-bind_ExplosiveArrow := bind_LeftRadial[1]
-bind_ExploitWeakness := bind_LeftRadial[2]
-bind_Puncture := bind_LeftRadial[3]
-
+; TODO: allow omitting weapon slots
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User Script - Logic
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-CURRENT_WEAPON := Weapon.TWO_HANDED
-
-isMelee()
-{
-  global
-  return (   CURRENT_WEAPON = Weapon.ONE_HANDED
-          || CURRENT_WEAPON = Weapon.TWO_HANDED)
-}
-isArchery()
-{
-  global
-  return (CURRENT_WEAPON = Weapon.BOW)
-}
-setWeapon(weap)
-{
-  global
-  CURRENT_WEAPON := weap
-  bind_Weapon[weap].emit()
-}
-
 *MButton::
   mods := Keyboard.downMods()
   if (Keyboard.isDown(Keyboard.LALT,mods)) {
-    setWeapon(Weapon.BOW)
+    Weapon.set(WeaponType.BOW)
   } else {
-    setWeapon(Weapon.STAFF)
+    Weapon.set(WeaponType.STAFF)
   }
   return
 
 *WheelUp::
-  setWeapon(Weapon.TWO_HANDED)
+  Weapon.set(WeaponType.TWO_HANDED)
   return
 
 *WheelDown::
-  setWeapon(Weapon.ONE_HANDED)
+  Weapon.set(WeaponType.ONE_HANDED)
   return
 
