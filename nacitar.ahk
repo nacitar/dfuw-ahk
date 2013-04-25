@@ -176,7 +176,7 @@ $*`::
   }
   return
 
-*WheelDown::
+~*WheelDown::
   ; if alt is down, just let the normal function happen (map zooming, etc)
   if (!Keyboard.isDown(Keyboard.LALT)) {
     Weapon.set(WeaponType.ONE_HANDED)
@@ -192,8 +192,13 @@ $*`::
   return
 
 $*XButton1::
-  ; heal self
-  Radial.instant(RadialType.RIGHT,2)
+  if (Keyboard.isDown(Keyboard.LALT)) {
+    ; Heal mount
+    Radial.instant(RadialType.RIGHT,1)
+  } else {
+    ; heal self
+    Radial.instant(RadialType.RIGHT,2)
+  }
   return
 
 $*XButton2::
