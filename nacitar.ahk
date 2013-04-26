@@ -212,13 +212,13 @@ $*XButton1::
 $*XButton2::
   mods := Keyboard.downMods()
   if (Keyboard.isDown([Keyboard.LCTRL,Keyboard.LALT],mods)) {
-    ; evade
+    ; efficiency
     Radial.instant(RadialType.RIGHT,1)
   } else if (Keyboard.isDown(Keyboard.LCTRL,mods)) {
-    ; efficiency
+    ; leap
     Radial.instant(RadialType.RIGHT,8)
   } else if (Keyboard.isDown(Keyboard.LALT,mods)) {
-    ; leap
+    ; evade
     Radial.instant(RadialType.RIGHT,7)
   } else {
     ; dash
