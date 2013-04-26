@@ -202,7 +202,7 @@ $*`::
 $*XButton1::
   if (Keyboard.isDown(Keyboard.LALT)) {
     ; Heal mount
-    Radial.instant(RadialType.RIGHT,1)
+    Radial.instant(RadialType.LEFT,8)
   } else {
     ; heal self
     Radial.instant(RadialType.RIGHT,2)
@@ -211,7 +211,10 @@ $*XButton1::
 
 $*XButton2::
   mods := Keyboard.downMods()
-  if (Keyboard.isDown(Keyboard.LCTRL,mods)) {
+  if (Keyboard.isDown([Keyboard.LCTRL,Keyboard.LALT],mods)) {
+    ; evade
+    Radial.instant(RadialType.RIGHT,1)
+  } else if (Keyboard.isDown(Keyboard.LCTRL,mods)) {
     ; efficiency
     Radial.instant(RadialType.RIGHT,8)
   } else if (Keyboard.isDown(Keyboard.LALT,mods)) {
