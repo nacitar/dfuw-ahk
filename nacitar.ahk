@@ -70,14 +70,22 @@ Game.WeaponSlot[WeaponType.ONE_HANDED] := 4
 
 Game.ResetSkill := Binding("``") 
 Game.Parry := Binding("v")
+Game.AutoRun := Binding("NumpadSub")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User Script - Logic
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-SetNumLockState, AlwaysOn
 ; block the windows key!
 *LWin::
+  return
+
+; Keep numlock on!
+SetNumLockState, AlwaysOn
+
+; Forward numlock presses to numpad -
+*NumLock::
+  Game.AutoRun.emit()
   return
 
 ; You can't block mouse buttons, so unset mbutton skill selection or

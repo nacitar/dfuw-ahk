@@ -43,6 +43,7 @@ class Game
 
   static ResetSkill := Binding()
   static Parry := Binding()
+  static AutoRun := Binding()
 }
 ; Create dummy hotkeys for known functions we are writing scripts for; this
 ; means if a user fails to redefine these to real hotkeys, trying to .emit()
