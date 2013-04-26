@@ -1,4 +1,4 @@
-dfuw_ahk
+dfuw-ahk
 ========
 
 darkfall unholy wars autohotkey scripts
