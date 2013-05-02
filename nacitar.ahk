@@ -199,11 +199,17 @@ $*`::
   }
   return
 
-; let 0 through, we want to type
 ~*1::
   if (Keyboard.isDown(Keyboard.LALT)) {
     ; eat food
     Game.QuickItem[5].emit()
+  }
+  return
+
+~*2::
+  if (Keyboard.isDown(Keyboard.LALT)) {
+    ; drink pot
+    Game.QuickItem[6].emit()
   }
   return
 
