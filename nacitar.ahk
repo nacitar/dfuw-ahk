@@ -171,9 +171,9 @@ $*`::
   
 *MButton::
   if (Keyboard.isDown(Keyboard.LALT)) {
-    Weapon.set(WeaponType.BOW)
-  } else {
     Weapon.set(WeaponType.STAFF)
+  } else {
+    Weapon.set(WeaponType.BOW)
   }
   return
 
@@ -196,6 +196,14 @@ $*`::
   if (Keyboard.isDown(Keyboard.LALT)) {
     ; spawn mount
     Game.QuickItem[7].emit()
+  }
+  return
+
+; let 0 through, we want to type
+~*1::
+  if (Keyboard.isDown(Keyboard.LALT)) {
+    ; eat food
+    Game.QuickItem[5].emit()
   }
   return
 
