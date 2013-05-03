@@ -1,0 +1,3 @@
+[submodule "dfuw-icons"]
+	path = dfuw-icons
+	url = git@github.com:nacitar/dfuw-icons.git

@@ -1,4 +1,6 @@
 
+; Standalone OSD test implementation.
+
 class Stopwatch {
   now() {
     return A_TickCount
@@ -103,7 +105,7 @@ class GuiWindow {
 }
 
 image_path(relative_name) {
-  return A_Scriptdir "/" relative_name
+  return A_Scriptdir "/dfuw-icons/" relative_name
 }
 
 ; define globals so they can be used as control identifiers
@@ -219,7 +221,7 @@ class SkillOverlay {
     y_offset := (this.settings.icon_height + this.settings.row_spacing) * (skill_num-1)
     bar_y_offset := (y_offset + (this.settings.icon_height - this.settings.progress_height))
     bar_x_offset := (this.settings.icon_width + this.settings.progress_spacing)
-    this.window.addImage(image_path("image/dash.png"),0,y_offset,this.settings.icon_width,this.settings.icon_height,this.skillImage(skill_num))
+    this.window.addImage(image_path("skill/brawler/dash.png"),0,y_offset,this.settings.icon_width,this.settings.icon_height,this.skillImage(skill_num))
     this.window.addProgress(bar_x_offset,bar_y_offset,this.settings.progress_width,this.settings.progress_height,0,this.settings.progress_samples,this.skillProgress(skill_num))
     ;this.setProgress(50+skill_num,skill_num)
   }
@@ -230,19 +232,3 @@ class SkillOverlay {
 }
 
 the_overlay:=new SkillOverlay("testoverlay")
-
-;something := ""
-;somethingImage := ""
-;somethingElse := ""
-;mywindow := new GuiWindow("argh")
-;mywindow.setClickThrough()
-;dash_file := A_Scriptdir "/image/dash.png"
-;mywindow.addText("I LIKE TURTLES","something")
-;mywindow.setText("WHAT","something")
-;mywindow.addImage(A_Scriptdir "/image/air.png",0,0,32,32,"somethingImage")
-;mywindow.addImage(dash_file,"p+32","p+32",32,32)
-;mywindow.addProgress("p+32","p+15",200,10,0,200,"somethingElse")
-;mywindow.setProgress(25,"somethingElse")
-;mywindow.setImage(dash_file,"somethingImage")
-;mywindow.show(0,0,false)
-
