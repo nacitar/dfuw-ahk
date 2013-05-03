@@ -36,7 +36,7 @@ SetNumLockState, AlwaysOn
 
 ; Forward numlock presses to numpad -
 *NumLock::
-  Game.AutoRun.emit()
+  Game.AutoRun.press()
   return
 
 ; You can't block mouse buttons, so unset mbutton skill selection or
@@ -66,14 +66,14 @@ $~*LButton::
     ; No mods; plain...
     LBUTTON_TYPE:=1
     ; press activate, but don't release
-    Game.RadialActivate[RadialType.LEFT].down.emit()
+    Game.RadialActivate[RadialType.LEFT].down()
   }
   return
 
 $~*LButton up::
   ; release it now
   if (LBUTTON_TYPE = 1) {
-    Game.RadialActivate[RadialType.LEFT].up.emit()
+    Game.RadialActivate[RadialType.LEFT].up()
   }
   return
 
@@ -105,7 +105,7 @@ $~*RButton::
       } else {
         ; block
         RBUTTON_TYPE:=1
-        Game.Parry.down.emit()
+        Game.Parry.down()
       }
     }
   } else if ( Weapon.isBow() ) {
@@ -143,7 +143,7 @@ $~*RButton::
 $~*RButton up::
   if (RBUTTON_TYPE = 1) {
     ; parry
-    Game.Parry.up.emit()
+    Game.Parry.up()
   }
   return
 
@@ -151,10 +151,10 @@ $~*RButton up::
 $*`::
   if (Keyboard.isDown(Keyboard.LALT)) {
     ; skinner
-    Item.get(ItemType.SKINNER).emit()
+    Item.get(ItemType.SKINNER).press()
   } else {
     ; just default ` action
-    Game.ResetSkill.emit() 
+    Game.ResetSkill.press() 
   }
   return
   
@@ -185,35 +185,35 @@ $*`::
 ~*0::
   if (Keyboard.isDown(Keyboard.LALT)) {
     ; spawn mount
-    Item.get(ItemType.MOUNT).emit()
+    Item.get(ItemType.MOUNT).press()
   }
   return
 
 ~*1::
   if (Keyboard.isDown(Keyboard.LALT)) {
     ; eat food
-    Item.get(ItemType.FOOD).emit()
+    Item.get(ItemType.FOOD).press()
   }
   return
 
 ~*2::
   if (Keyboard.isDown(Keyboard.LALT)) {
     ; drink health pot
-    Item.get(ItemType.HEALTH_POT).emit()
+    Item.get(ItemType.HEALTH_POT).press()
   }
   return
 
 ~*3::
   if (Keyboard.isDown(Keyboard.LALT)) {
     ; drink stamina pot
-    Item.get(ItemType.STAMINA_POT).emit()
+    Item.get(ItemType.STAMINA_POT).press()
   }
   return
 
 ~*4::
   if (Keyboard.isDown(Keyboard.LALT)) {
     ; drink mana pot
-    Item.get(ItemType.MANA_POT).emit()
+    Item.get(ItemType.MANA_POT).press()
   }
   return
 

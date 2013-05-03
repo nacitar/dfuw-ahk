@@ -57,6 +57,15 @@ make_array(obj) {
   return obj
 }
 
+class Stopwatch {
+  now() {
+    return A_TickCount
+  }
+
+  elapsed(current,previous) {
+    return current - previous
+  }
+}
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keyboard Input Model
@@ -286,12 +295,20 @@ class BindingObject {
     this.up := KeySeq(up_state_array)
   }
 
-  ; TODO, allow multiple "emit types" for different things than sleeping
-  emit() {
-    this.down.emit()
+  down() {
+    this.keys_down.emit()
+  }
+
+  up() {
+    this.keys_up.emit()
+  }
+
+  ; TODO, allow multiple "press types" for different things than sleeping
+  press() {
+    this.down()
     ; TODO: use a Sleep that has higher resolution
     Sleep, % BindingObject.PRESS_DURATION_MS
-    this.up.emit()
+    this.up()
   }
 }
 Binding(key=-1,mod_key_array=-1) {

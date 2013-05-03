@@ -52,7 +52,7 @@ class Game
   static AutoRun := Binding()
 }
 ; Create dummy hotkeys for known functions we are writing scripts for; this
-; means if a user fails to redefine these to real hotkeys, trying to .emit()
+; means if a user fails to redefine these to real hotkeys, trying to use
 ; them will result in an error about emitting an empty KeySeq (good!) instead
 ; of giving no error at all and silently doing nothing (bad!)
 Game.QuickItem[1] := Binding()
@@ -107,14 +107,14 @@ class Radial
 
   set(radial_type) {
     Radial.CURRENT := radial_type
-    Game.Radial[radial_type].emit()
+    Game.Radial[radial_type].press()
   }
 
   skill(radial_type,number) {
     if (number > 0 && number <= 8) {
       Radial.LAST := radial_type
       Radial.LAST_SKILL[radial_type] := number
-      Game.RadialSkill[radial_type][number].emit()
+      Game.RadialSkill[radial_type][number].press()
     } else {
       raise_exception("Radial skill must be 1-8.  Forget to set ItemSlot?")
     }
@@ -124,7 +124,7 @@ class Radial
     if (radial_type = -1) {
       radial_type := Radial.LAST
     }
-    Game.RadialActivate[radial_type].emit()
+    Game.RadialActivate[radial_type].press()
   }
 
   ; shortcut for skill + activate
@@ -194,7 +194,43 @@ class Weapon {
 
   set(weapon_type) {
     Weapon.CURRENT := weapon_type
-    Item.get(weapon_type).emit()
+    Item.get(weapon_type).press()
   }
 }
 
+
+; TODO: track whether we're currently casting or not
+class SkillObject {
+  __New(name,cast_ms,cooldown_ms,image_file,binding) {
+    this.name := name
+    this.cast_ms := cast_ms
+    this.cooldown_ms := cooldown_ms
+    this.image_file := ""
+    this.binding := binding
+
+    ; TODO: figure out how to incorporate this
+    this.overlays := []
+  }
+  startCooldown() {
+    Loop, % this.overlays.MaxIndex() {
+      this.overlays[A_Index].startCooldown(this)
+    }
+  }
+
+  down() {
+    this.binding.down()
+  }
+  up() {
+    this.binding.up()
+  }
+
+  press() {
+    this.binding.press()
+  }
+}
+Skill(name,cast_ms=0,cooldown_ms=0,image_file="",binding=-1) {
+  if (binding = -1) {
+    binding := Binding()
+  }
+  return new SkillObject(name,cast_ms,cooldown_ms,image_file,binding)
+}
