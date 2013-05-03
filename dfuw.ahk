@@ -96,8 +96,33 @@ Game.ItemSlot[ItemType.STAMINA_POT] := 0
 Game.ItemSlot[ItemType.MANA_POT] := 0
 Game.ItemSlot[ItemType.SKINNER] := 0
 
-class Radial
-{
+class RadialBindingObject {
+  ; NOTE: caches hotkeys at this time
+  __New(radial_type,number) {
+    this.radial_binding := Game.RadialSkill[radial_type][number]
+    this.radial_activate := Game.RadialActivate[radial_type]
+  }
+  down() {
+    this.radial_binding.down()
+  }
+  up() {
+    this.radial_binding.up()
+  }
+  press() {
+    this.radial_binding.press()
+  }
+
+  ; also activates
+  instant() {
+    this.press()
+    this.radial_activate.press()
+  }
+}
+RadialBinding(radial_type,number) {
+  return new RadialBindingObject(radial_type,number)
+}
+
+class Radial {
   ; Stores the currently selected radial 
   static CURRENT := 0
   ; Stores the radial of the most recently selected skill
@@ -137,6 +162,9 @@ class Radial
 class Item {
   get(item_type) {
     return Game.QuickItem[Game.ItemSlot[item_type]]
+  }
+  use(item_type) {
+    this.get(item_type).press()
   }
 }
 
@@ -194,22 +222,31 @@ class Weapon {
 
   set(weapon_type) {
     Weapon.CURRENT := weapon_type
-    Item.get(weapon_type).press()
+    Item.use(weapon_type)
   }
 }
 
 
 ; TODO: track whether we're currently casting or not
-class SkillObject {
-  __New(name,cast_ms,cooldown_ms,image_file,binding) {
+class SkillInfoObject {
+  __New(name,image_file,cast_ms,cooldown_ms,binding) {
     this.name := name
     this.cast_ms := cast_ms
     this.cooldown_ms := cooldown_ms
-    this.image_file := ""
+    this.image_file := image_file
     this.binding := binding
 
     ; TODO: figure out how to incorporate this
     this.overlays := []
+  }
+  set(binding,cast_ms=-1,cooldown_ms=-1) {
+    this.binding := binding
+    if (cast_ms != -1) {
+      this.cast_ms := cast_ms
+    }
+    if (cooldown_ms != -1) {
+      this.cooldown_ms := cooldown_ms
+    }
   }
   startCooldown() {
     Loop, % this.overlays.MaxIndex() {
@@ -228,9 +265,56 @@ class SkillObject {
     this.binding.press()
   }
 }
-Skill(name,cast_ms=0,cooldown_ms=0,image_file="",binding=-1) {
+SkillInfo(name,image_file="",cast_ms=0,cooldown_ms=0,binding=-1) {
   if (binding = -1) {
     binding := Binding()
   }
-  return new SkillObject(name,cast_ms,cooldown_ms,image_file,binding)
+  return new SkillInfoObject(name,image_file,cast_ms,cooldown_ms,binding)
+}
+
+class IconDirWrapperObject {
+  __New(basedir) {
+    this.basedir := basedir
+  }
+  get(relative_path="") {
+    return this.basedir "/" relative_path
+  }
+}
+IconDirWrapper(basedir="") {
+    if (basedir = "") {
+      basedir := A_ScriptDir "/dfuw-icons"
+    }
+    return new IconDirWrapperObject(basedir)
+}
+
+class BrawlerSkillObject {
+  static base_dir := IconDirWrapper(IconDirWrapper().get("skill/brawler"))
+  Dash := SkillInfo("Dash",this.base_dir.get("dash.png"))
+  Efficiency := SkillInfo("Efficiency",this.base_dir.get("efficiency.png"))
+  Evade := SkillInfo("Evade",this.base_dir.get("evade.png"))
+  Leap := SkillInfo("Leap",this.base_dir.get("leap.png"))
+  HeightenedReflexes := SkillInfo("Heightened Reflexes"
+                        ,this.base_dir.get("heightened_reflexes.png"))
+}
+BrawlerSkill() {
+  return new BrawlerSkillObject()
+}
+class CommonSkillObject {
+  static base_dir := IconDirWrapper(IconDirWrapper().get("skill/common"))
+  HealSelf := SkillInfo("Heal Self",this.base_dir.get("heal_self.png"))
+  HealMount := SkillInfo("Heal Mount",this.base_dir.get("heal_mount.png"))
+  ManaToStamina := SkillInfo("Mana To Stamina"
+                   ,this.base_dir.get("mana_to_stamina.png"))
+  StaminaToHealth := SkillInfo("Stamina To Health"
+                     ,this.base_dir.get("stamina_to_health.png"))
+  HealthToMana := SkillInfo("Health To Mana"
+                  ,this.base_dir.get("health_to_mana.png"))
+}
+CommonSkill() {
+  return new CommonSkillObject()
+}
+
+class Skill {
+  static Brawler := BrawlerSkill()
+  static Common := CommonSkill()
 }

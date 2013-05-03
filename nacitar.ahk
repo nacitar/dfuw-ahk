@@ -54,14 +54,11 @@ $~*LButton::
   LBUTTON_TYPE:=0
   mods := Keyboard.downMods()
   if (Keyboard.isDown([Keyboard.LCTRL,Keyboard.LALT],mods)) {
-    ; health to mana
-    Radial.instant(RadialType.RIGHT,5)
+    Skill.Common.HealthToMana.instant()
   } else if (Keyboard.isDown(Keyboard.LCTRL,mods)) {
-    ; stamina to health
-    Radial.instant(RadialType.RIGHT,4)
+    Skill.Common.StaminaToHealth.instant()
   } else if (Keyboard.isDown(Keyboard.LALT,mods)) {
-    ; mana to stamina
-    Radial.instant(RadialType.RIGHT,3)
+    Skill.Common.ManaToStamina.instant()
   } else {
     ; No mods; plain...
     LBUTTON_TYPE:=1
@@ -151,7 +148,7 @@ $~*RButton up::
 $*`::
   if (Keyboard.isDown(Keyboard.LALT)) {
     ; skinner
-    Item.get(ItemType.SKINNER).press()
+    Item.use(ItemType.SKINNER)
   } else {
     ; just default ` action
     Game.ResetSkill.press() 
@@ -185,65 +182,59 @@ $*`::
 ~*0::
   if (Keyboard.isDown(Keyboard.LALT)) {
     ; spawn mount
-    Item.get(ItemType.MOUNT).press()
+    Item.use(ItemType.MOUNT)
   }
   return
 
 ~*1::
   if (Keyboard.isDown(Keyboard.LALT)) {
     ; eat food
-    Item.get(ItemType.FOOD).press()
+    Item.use(ItemType.FOOD)
   }
   return
 
 ~*2::
   if (Keyboard.isDown(Keyboard.LALT)) {
     ; drink health pot
-    Item.get(ItemType.HEALTH_POT).press()
+    Item.use(ItemType.HEALTH_POT)
   }
   return
 
 ~*3::
   if (Keyboard.isDown(Keyboard.LALT)) {
     ; drink stamina pot
-    Item.get(ItemType.STAMINA_POT).press()
+    Item.use(ItemType.STAMINA_POT)
   }
   return
 
 ~*4::
   if (Keyboard.isDown(Keyboard.LALT)) {
     ; drink mana pot
-    Item.get(ItemType.MANA_POT).press()
+    Item.use(ItemType.MANA_POT)
   }
   return
 
 $*XButton1::
   if (Keyboard.isDown(Keyboard.LALT)) {
-    ; Heal mount
-    Radial.instant(RadialType.LEFT,8)
+    Skill.Common.HealMount().instant()
   } else {
-    ; heal self
-    Radial.instant(RadialType.RIGHT,2)
+    Skill.Common.HealSelf().instant()
   }
   return
 
 $*XButton2::
   mods := Keyboard.downMods()
   if (Keyboard.isDown([Keyboard.LCTRL,Keyboard.LALT],mods)) {
-    ; efficiency (skirmisher)
     ; roar (warrior)
-    Radial.instant(RadialType.RIGHT,1)
+    Skill.Brawler.Efficiency.instant()
   } else if (Keyboard.isDown(Keyboard.LCTRL,mods)) {
-    ; leap (skirmisher)
     ; repel (warrior)
-    Radial.instant(RadialType.RIGHT,8)
+    Skill.Brawler.Leap.instant()
   } else if (Keyboard.isDown(Keyboard.LALT,mods)) {
-    ; evade (skirmisher)
     ; foebringer (warrior)
-    Radial.instant(RadialType.RIGHT,7)
+    Skill.Brawler.Evade.instant()
   } else {
-    ; dash (skirmisher)
     ; stampede (warrior)
-    Radial.instant(RadialType.RIGHT,6)
+    Skill.Brawler.Dash.instant()
   }
   return

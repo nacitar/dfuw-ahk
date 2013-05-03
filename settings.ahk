@@ -71,5 +71,25 @@ Game.ResetSkill := Binding("``")
 Game.Parry := Binding("v")
 Game.AutoRun := Binding("NumpadSub")
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; User Script - Skill Placement
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; these must be set _after_ the radials bound above
+Skill.Brawler.Dash.set(               RadialBinding(RadialType.RIGHT,6))
+Skill.Brawler.Efficiency.set(         RadialBinding(RadialType.RIGHT,1))
+Skill.Brawler.Evade.set(              RadialBinding(RadialType.RIGHT,7))
+Skill.Brawler.Leap.set(               RadialBinding(RadialType.RIGHT,8))
+;Skill.Brawler.HeightenedReflexes.set( RadialBinding(RadialType.RIGHT,7))
+
+Skill.Common.HealSelf.set(        RadialBinding(RadialType.RIGHT,2))
+Skill.Common.HealMount.set(       RadialBinding(RadialType.LEFT ,8))
+Skill.Common.ManaToStamina.set(   RadialBinding(RadialType.RIGHT,3))
+Skill.Common.StaminaToHealth.set( RadialBinding(RadialType.RIGHT,4))
+Skill.Common.HealthToMana.set(    RadialBinding(RadialType.RIGHT,5))
+
+
 ; Default role
 Role.set(RoleType.SKIRMISHER)
+

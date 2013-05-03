@@ -310,6 +310,11 @@ class BindingObject {
     Sleep, % BindingObject.PRESS_DURATION_MS
     this.up()
   }
+
+  ; not useful in this context, but this interface can be used by others
+  instant() {
+    this.press()
+  }
 }
 Binding(key=-1,mod_key_array=-1) {
   if (key != -1) {
