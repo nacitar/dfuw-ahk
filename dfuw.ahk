@@ -134,17 +134,45 @@ class Radial
   }
 }
 
-class Item
-{
+class Item {
   get(item_type) {
     return Game.QuickItem[Game.ItemSlot[item_type]]
   }
 }
 
-class Weapon
-{
+class RoleType { ; enum
+  static SKIRMISHER := 1
+  static WARRIOR := 2
+  static ELEMENTALIST := 3
+  static PRIMALIST := 4
+}
+class Role {
+  static CURRENT := RoleType.SKIRMISHER 
+
+  set(role_type) {
+    Role.CURRENT := role_type
+  }
+
+  isSkirmisher() {
+    return (Role.CURRENT = RoleType.SKIRMISHER)
+  }
+
+  isWarrior() {
+    return (Role.CURRENT = RoleType.WARRIOR)
+  }
+
+  isElementalist() {
+    return (Role.CURRENT = RoleType.ELEMENTALIST)
+  }
+
+  isPrimalist() {
+    return (Role.CURRENT = RoleType.PRIMALIST)
+  }
+}
+
+class Weapon {
   ; Stores the currently equipped weapon
-  static CURRENT := 1
+  static CURRENT := ItemType.ONE_HANDED
 
   ; methods mostly for convenience
   isOneHanded() {

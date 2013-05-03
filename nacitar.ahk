@@ -82,6 +82,9 @@ Game.AutoRun := Binding("NumpadSub")
 ;; User Script - Logic
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+; CHANGE YOUR ROLE HERE
+Role.set(RoleType.SKIRMISHER)
+
 ; block the windows key!
 *LWin::
   return
@@ -136,32 +139,68 @@ $~*RButton::
   RBUTTON_TYPE:=0
   if ( Weapon.isMelee() ) {
     mods := Keyboard.downMods()
-    if (Keyboard.isDown(Keyboard.LALT,mods)) {
-      Radial.skill(RadialType.LEFT,5)
-    } else {
-      RBUTTON_TYPE:=1
-      Game.Parry.down.emit()
+
+    done := false
+    if ( Role.isWarrior() ) {
+      ; assume done so we can handle it in the else
+      done := true
+      if (Keyboard.isDown([Keyboard.LCTRL,Keyboard.LALT],mods)) {
+        ; stinging riposte (warrior)
+        Radial.skill(RadialType.LEFT,3)
+      } else if (Keyboard.isDown(Keyboard.LCTRL,mods)) {
+        ; bandage (warrior)
+        Radial.skill(RadialType.LEFT,2)
+      } else {
+        ; found nothing
+        done := false
+      }
+    }
+    ; if we didn't get a role-skill earlier, choose universal
+    if (!done) {
+      if (Keyboard.isDown(Keyboard.LALT,mods)) {
+        ; disabling blow
+        Radial.skill(RadialType.LEFT,5)
+      } else {
+        ; block
+        RBUTTON_TYPE:=1
+        Game.Parry.down.emit()
+      }
     }
   } else if ( Weapon.isBow() ) {
     mods := Keyboard.downMods()
-    if (Keyboard.isDown([Keyboard.LCTRL,Keyboard.LALT],mods)) {
-      ; explosive arrow
-      Radial.skill(RadialType.LEFT,3)
-    } else if (Keyboard.isDown(Keyboard.LCTRL,mods)) {
-      ; puncture
-      Radial.skill(RadialType.LEFT,2)
-    } else if (Keyboard.isDown(Keyboard.LALT,mods)) {
-      ; disabling shot
-      Radial.skill(RadialType.LEFT,4)
-    } else {
-      ; exploit weakness
-      Radial.skill(RadialType.LEFT,1)
+    done := false
+    if ( Role.isSkirmisher() ) {
+      done := true
+      if (Keyboard.isDown([Keyboard.LCTRL,Keyboard.LALT],mods)) {
+        ; explosive arrow (skirmisher)
+        Radial.skill(RadialType.LEFT,3)
+      } else if (Keyboard.isDown(Keyboard.LCTRL,mods)) {
+        ; puncture (skirmisher)
+        Radial.skill(RadialType.LEFT,2)
+      } else {
+        done := false
+      }
+    }
+    ; need to check for disabling shot before doing the default
+    if (!done) {
+      if (Keyboard.isDown(Keyboard.LALT,mods)) {
+        ; disabling shot
+        Radial.skill(RadialType.LEFT,4)
+        done := true
+      }
+    }
+    if (!done) {
+      if ( Role.isSkirmisher() ) {
+        ; exploit weakness (skirmisher)
+        Radial.skill(RadialType.LEFT,1)
+      }
     }
   }
   return
 
 $~*RButton up::
   if (RBUTTON_TYPE = 1) {
+    ; parry
     Game.Parry.up.emit()
   }
   return
@@ -172,12 +211,14 @@ $*`::
     ; skinner
     Item.get(ItemType.SKINNER).emit()
   } else {
+    ; just default ` action
     Game.ResetSkill.emit() 
   }
   return
   
 *MButton::
   if (Keyboard.isDown(Keyboard.LALT)) {
+    ; not currently slotted
     Weapon.set(ItemType.STAFF)
   } else {
     Weapon.set(ItemType.BOW)
@@ -247,16 +288,20 @@ $*XButton1::
 $*XButton2::
   mods := Keyboard.downMods()
   if (Keyboard.isDown([Keyboard.LCTRL,Keyboard.LALT],mods)) {
-    ; efficiency
+    ; efficiency (skirmisher)
+    ; roar (warrior)
     Radial.instant(RadialType.RIGHT,1)
   } else if (Keyboard.isDown(Keyboard.LCTRL,mods)) {
-    ; leap
+    ; leap (skirmisher)
+    ; repel (warrior)
     Radial.instant(RadialType.RIGHT,8)
   } else if (Keyboard.isDown(Keyboard.LALT,mods)) {
-    ; evade
+    ; evade (skirmisher)
+    ; foebringer (warrior)
     Radial.instant(RadialType.RIGHT,7)
   } else {
-    ; dash
+    ; dash (skirmisher)
+    ; stampede (warrior)
     Radial.instant(RadialType.RIGHT,6)
   }
   return
