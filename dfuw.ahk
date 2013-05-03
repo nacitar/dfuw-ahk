@@ -22,11 +22,17 @@
 ;; Darkfall Unholy Wars 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-class WeaponType { ; enum
-  static ONE_HANDED := 1
-  static TWO_HANDED := 2
-  static STAFF := 3
-  static BOW := 4
+class ItemType { ; enum
+  static STAFF := 1
+  static BOW := 2
+  static TWO_HANDED := 3
+  static ONE_HANDED := 4
+  static MOUNT := 5
+  static FOOD := 6
+  static HEALTH_POT := 7
+  static STAMINA_POT := 8
+  static MANA_POT := 9
+  static SKINNER := 10
 }
 class RadialType { ; enum
   static LEFT := 1
@@ -39,7 +45,7 @@ class Game
   static Radial := []
   static RadialActivate := []
   static RadialSkill := [ [], [] ] ; [RadialType][number]
-  static WeaponSlot := []
+  static ItemSlot := []
 
   static ResetSkill := Binding()
   static Parry := Binding()
@@ -79,10 +85,16 @@ Game.RadialSkill[RadialType.RIGHT][6] := Binding()
 Game.RadialSkill[RadialType.RIGHT][7] := Binding()
 Game.RadialSkill[RadialType.RIGHT][8] := Binding()
 ; Dummy weapon slots, if using setQuickItem(), this index causes an error
-Game.WeaponSlot[WeaponType.ONE_HANDED] := 0
-Game.WeaponSlot[WeaponType.TWO_HANDED] := 0
-Game.WeaponSlot[WeaponType.STAFF] := 0
-Game.WeaponSlot[WeaponType.BOW] := 0
+Game.ItemSlot[ItemType.STAFF] := 0
+Game.ItemSlot[ItemType.BOW] := 0
+Game.ItemSlot[ItemType.TWO_HANDED] := 0
+Game.ItemSlot[ItemType.ONE_HANDED] := 0
+Game.ItemSlot[ItemType.MOUNT] := 0
+Game.ItemSlot[ItemType.FOOD] := 0
+Game.ItemSlot[ItemType.HEALTH_POT] := 0
+Game.ItemSlot[ItemType.STAMINA_POT] := 0
+Game.ItemSlot[ItemType.MANA_POT] := 0
+Game.ItemSlot[ItemType.SKINNER] := 0
 
 class Radial
 {
@@ -104,7 +116,7 @@ class Radial
       Radial.LAST_SKILL[radial_type] := number
       Game.RadialSkill[radial_type][number].emit()
     } else {
-      raise_exception("Radial skill must be 1-8.  Forget to set WeaponSlots?")
+      raise_exception("Radial skill must be 1-8.  Forget to set ItemSlot?")
     }
   }
 
@@ -122,6 +134,12 @@ class Radial
   }
 }
 
+class Item
+{
+  get(item_type) {
+    return Game.QuickItem[Game.ItemSlot[item_type]]
+  }
+}
 
 class Weapon
 {
@@ -130,16 +148,16 @@ class Weapon
 
   ; methods mostly for convenience
   isOneHanded() {
-    return (Weapon.CURRENT = WeaponType.ONE_HANDED)
+    return (Weapon.CURRENT = ItemType.ONE_HANDED)
   }
   isTwoHanded() {
-    return (Weapon.CURRENT = WeaponType.TWO_HANDED)
+    return (Weapon.CURRENT = ItemType.TWO_HANDED)
   }
   isBow() {
-    return (Weapon.CURRENT = WeaponType.BOW)
+    return (Weapon.CURRENT = ItemType.BOW)
   }
   isStaff() {
-    return (Weapon.CURRENT = WeaponType.STAFF)
+    return (Weapon.CURRENT = ItemType.STAFF)
   }
   ; 1h or 2h
   isMelee() {
@@ -148,7 +166,7 @@ class Weapon
 
   set(weapon_type) {
     Weapon.CURRENT := weapon_type
-    Game.QuickItem[Game.WeaponSlot[weapon_type]].emit()
+    Item.get(weapon_type).emit()
   }
 }
 

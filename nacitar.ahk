@@ -63,10 +63,16 @@ Game.RadialSkill[RadialType.RIGHT][7] := Binding("Numpad7",Keyboard.RCTRL)
 Game.RadialSkill[RadialType.RIGHT][8] := Binding("Numpad8",Keyboard.RCTRL)
 
 ; Which quick item slots for which weapons?
-Game.WeaponSlot[WeaponType.STAFF] := 1
-Game.WeaponSlot[WeaponType.BOW] := 2
-Game.WeaponSlot[WeaponType.TWO_HANDED] := 3
-Game.WeaponSlot[WeaponType.ONE_HANDED] := 4
+;Game.ItemSlot[ItemType.STAFF] := 0
+Game.ItemSlot[ItemType.BOW] := 1
+Game.ItemSlot[ItemType.TWO_HANDED] := 2
+Game.ItemSlot[ItemType.ONE_HANDED] := 3
+Game.ItemSlot[ItemType.MOUNT] := 4
+Game.ItemSlot[ItemType.FOOD] := 5
+Game.ItemSlot[ItemType.HEALTH_POT] := 6
+Game.ItemSlot[ItemType.STAMINA_POT] := 7
+Game.ItemSlot[ItemType.MANA_POT] := 8 ; same
+Game.ItemSlot[ItemType.SKINNER] := 8 ; same
 
 Game.ResetSkill := Binding("``") 
 Game.Parry := Binding("v")
@@ -163,7 +169,8 @@ $~*RButton up::
 ; Don't let us activate ourselves
 $*`::
   if (Keyboard.isDown(Keyboard.LALT)) {
-    Game.QuickItem[8].emit()
+    ; skinner
+    Item.get(ItemType.SKINNER).emit()
   } else {
     Game.ResetSkill.emit() 
   }
@@ -171,23 +178,23 @@ $*`::
   
 *MButton::
   if (Keyboard.isDown(Keyboard.LALT)) {
-    Weapon.set(WeaponType.STAFF)
+    Weapon.set(ItemType.STAFF)
   } else {
-    Weapon.set(WeaponType.BOW)
+    Weapon.set(ItemType.BOW)
   }
   return
 
 ~*WheelUp::
   ; if alt is down, just let the normal function happen (map zooming, etc)
   if (!Keyboard.isDown(Keyboard.LALT)) {
-    Weapon.set(WeaponType.TWO_HANDED)
+    Weapon.set(ItemType.TWO_HANDED)
   }
   return
 
 ~*WheelDown::
   ; if alt is down, just let the normal function happen (map zooming, etc)
   if (!Keyboard.isDown(Keyboard.LALT)) {
-    Weapon.set(WeaponType.ONE_HANDED)
+    Weapon.set(ItemType.ONE_HANDED)
   }
   return
 
@@ -195,21 +202,35 @@ $*`::
 ~*0::
   if (Keyboard.isDown(Keyboard.LALT)) {
     ; spawn mount
-    Game.QuickItem[7].emit()
+    Item.get(ItemType.MOUNT).emit()
   }
   return
 
 ~*1::
   if (Keyboard.isDown(Keyboard.LALT)) {
     ; eat food
-    Game.QuickItem[5].emit()
+    Item.get(ItemType.FOOD).emit()
   }
   return
 
 ~*2::
   if (Keyboard.isDown(Keyboard.LALT)) {
-    ; drink pot
-    Game.QuickItem[6].emit()
+    ; drink health pot
+    Item.get(ItemType.HEALTH_POT).emit()
+  }
+  return
+
+~*3::
+  if (Keyboard.isDown(Keyboard.LALT)) {
+    ; drink stamina pot
+    Item.get(ItemType.STAMINA_POT).emit()
+  }
+  return
+
+~*4::
+  if (Keyboard.isDown(Keyboard.LALT)) {
+    ; drink mana pot
+    Item.get(ItemType.MANA_POT).emit()
   }
   return
 
