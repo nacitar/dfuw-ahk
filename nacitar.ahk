@@ -219,9 +219,9 @@ $*`::
 
 $*XButton1::
   if (Keyboard.isDown(Keyboard.LALT)) {
-    Skill.Common.HealMount().instant()
+    Skill.Common.HealMount.instant()
   } else {
-    Skill.Common.HealSelf().instant()
+    Skill.Common.HealSelf.instant()
   }
   return
 
