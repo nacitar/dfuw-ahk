@@ -15,10 +15,13 @@
  */
 
 #Include %A_ScriptDir%/settings.ahk
+; match exact titles only
+SetTitleMatchMode, 3
 
 #IfWinActive, Darkfall Unholy Wars
 #SingleInstance force
 #NoEnv
+WinSet, AlwaysOnTop, Off, Darkfall Unholy Wars
 
 #HotkeyInterval 1 
 #MaxHotkeysPerInterval 2000

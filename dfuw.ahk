@@ -41,6 +41,7 @@ class RadialType { ; enum
 ; Stores game bindings
 class Game
 {
+  static WindowTitle := "Darkfall Unholy Wars"
   static QuickItem := []
   static Radial := []
   static RadialActivate := []
@@ -50,6 +51,7 @@ class Game
   static ResetSkill := Binding()
   static Parry := Binding()
   static AutoRun := Binding()
+
 }
 ; Create dummy hotkeys for known functions we are writing scripts for; this
 ; means if a user fails to redefine these to real hotkeys, trying to use
@@ -102,6 +104,7 @@ class RadialBindingObject {
     this.radial_binding := Game.RadialSkill[radial_type][number]
     this.radial_activate := Game.RadialActivate[radial_type]
   }
+
   down() {
     this.radial_binding.down()
   }
@@ -263,6 +266,10 @@ class SkillInfoObject {
 
   press() {
     this.binding.press()
+  }
+
+  instant() {
+    this.binding.instant()
   }
 }
 SkillInfo(name,image_file="",cast_ms=0,cooldown_ms=0,binding=-1) {

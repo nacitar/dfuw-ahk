@@ -291,8 +291,8 @@ class BindingObject {
     }
 
     ; Now that we have the arrays, we can make sequences with them
-    this.down := KeySeq(down_state_array)
-    this.up := KeySeq(up_state_array)
+    this.keys_down := KeySeq(down_state_array)
+    this.keys_up := KeySeq(up_state_array)
   }
 
   down() {
