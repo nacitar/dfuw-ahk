@@ -193,8 +193,8 @@ class Keyboard {
   static LSHIFT := Key("LShift")
   static LCTRL  := Key("LCtrl")
   static LALT   := Key("LAlt")
-  static RWIN   := Key("LWin") 
-  static LWIN   := Key("RWin")
+  static LWIN   := Key("LWin")
+  static RWIN   := Key("RWin") 
 
   static ALL_MODS   :=  [ Keyboard.RCTRL
                         , Keyboard.RALT

@@ -119,6 +119,9 @@ $~*RButton::
       } else if (Keyboard.isDown(Keyboard.LCTRL,mods)) {
         ; puncture (skirmisher)
         Radial.skill(RadialType.LEFT,2)
+      } else if (Keyboard.isDown(Keyboard.LWIN,mods)) {
+        ; salvo
+        Radial.skill(RadialType.LEFT,6)
       } else {
         done := false
       }
