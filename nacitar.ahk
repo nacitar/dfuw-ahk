@@ -52,102 +52,162 @@ SetNumLockState, AlwaysOn
 LBUTTON_TYPE:=1
 RBUTTON_TYPE:=1
 
-; Don't let us activate ourselves
-$~*LButton::
-  LBUTTON_TYPE:=0
-  mods := Keyboard.downMods()
-  if (Keyboard.isDown([Keyboard.LCTRL,Keyboard.LALT],mods)) {
-    Skill.Common.HealthToMana.instant()
-  } else if (Keyboard.isDown(Keyboard.LCTRL,mods)) {
-    Skill.Common.StaminaToHealth.instant()
-  } else if (Keyboard.isDown(Keyboard.LALT,mods)) {
-    Skill.Common.ManaToStamina.instant()
-  } else {
-    ; No mods; plain...
-    LBUTTON_TYPE:=1
-    ; press activate, but don't release
-    Game.RadialActivate[RadialType.LEFT].down()
-  }
-  return
+class CommonBinds {
+  LBUTTON_TYPE := 1
 
-$~*LButton up::
-  ; release it now
-  if (LBUTTON_TYPE = 1) {
-    Game.RadialActivate[RadialType.LEFT].up()
-  }
-  return
-
-$~*RButton::
-  RBUTTON_TYPE:=0
-  if ( Weapon.isMelee() ) {
+  onLButtonDown() {
+    this.LBUTTON_TYPE := 0
     mods := Keyboard.downMods()
-
-    done := false
-    if ( Role.isWarrior() ) {
-      ; assume done so we can handle it in the else
-      done := true
-      if (Keyboard.isDown([Keyboard.LCTRL,Keyboard.LALT],mods)) {
-        ; stinging riposte (warrior)
-        Radial.skill(RadialType.LEFT,3)
-      } else if (Keyboard.isDown(Keyboard.LCTRL,mods)) {
-        ; bandage (warrior)
-        Radial.skill(RadialType.LEFT,2)
-      } else {
-        ; found nothing
-        done := false
-      }
+    if (Keyboard.isDown([Keyboard.LCTRL,Keyboard.LALT],mods)) {
+      Skill.Common.HealthToMana.instant()
+    } else if (Keyboard.isDown(Keyboard.LCTRL,mods)) {
+      Skill.Common.StaminaToHealth.instant()
+    } else if (Keyboard.isDown(Keyboard.LALT,mods)) {
+      Skill.Common.ManaToStamina.instant()
+    } else {
+      ; No mods; plain...
+      this.LBUTTON_TYPE:=1
+      ; press activate, but don't release
+      Game.RadialActivate[RadialType.LEFT].down()
     }
-    ; if we didn't get a role-skill earlier, choose universal
-    if (!done) {
+  }
+  onLButtonUp() {
+    ; release the activate key if it was down
+    if (this.LBUTTON_TYPE = 1) {
+      Game.RadialActivate[RadialType.LEFT].up()
+    }
+  }
+}
+
+class SkirmisherBinds extends CommonBinds {
+  RBUTTON_TYPE := 1
+
+  onRButtonDown() {
+    this.RBUTTON_TYPE := 0
+    if ( Weapon.isMelee() ) {
+      mods := Keyboard.downMods()
       if (Keyboard.isDown(Keyboard.LALT,mods)) {
         ; disabling blow
         Radial.skill(RadialType.LEFT,5)
       } else {
         ; block
-        RBUTTON_TYPE:=1
+        this.RBUTTON_TYPE:=1
         Game.Parry.down()
       }
-    }
-  } else if ( Weapon.isBow() ) {
-    mods := Keyboard.downMods()
-    done := false
-    if ( Role.isSkirmisher() ) {
-      done := true
+    } else if ( Weapon.isBow() ) {
+      mods := Keyboard.downMods()
       if (Keyboard.isDown([Keyboard.LCTRL,Keyboard.LALT],mods)) {
-        ; explosive arrow (skirmisher)
+        ; explosive arrow
         Radial.skill(RadialType.LEFT,3)
       } else if (Keyboard.isDown(Keyboard.LCTRL,mods)) {
-        ; puncture (skirmisher)
+        ; puncture
         Radial.skill(RadialType.LEFT,2)
       } else if (Keyboard.isDown(Keyboard.LWIN,mods)) {
         ; salvo
         Radial.skill(RadialType.LEFT,6)
-      } else {
-        done := false
-      }
-    }
-    ; need to check for disabling shot before doing the default
-    if (!done) {
-      if (Keyboard.isDown(Keyboard.LALT,mods)) {
+      } else if (Keyboard.isDown(Keyboard.LALT,mods)) {
         ; disabling shot
         Radial.skill(RadialType.LEFT,4)
         done := true
-      }
-    }
-    if (!done) {
-      if ( Role.isSkirmisher() ) {
-        ; exploit weakness (skirmisher)
+      } else {
+        ; exploit weakness
         Radial.skill(RadialType.LEFT,1)
       }
     }
   }
+
+  onRButtonUp() {
+    if (this.RBUTTON_TYPE = 1) {
+      ; parry
+      Game.Parry.up()
+    }
+  }
+
+  onXButton2() {
+    mods := Keyboard.downMods()
+    if (Keyboard.isDown([Keyboard.LCTRL,Keyboard.LALT],mods)) {
+      Skill.Brawler.Efficiency.instant()
+    } else if (Keyboard.isDown(Keyboard.LCTRL,mods)) {
+      Skill.Brawler.Leap.instant()
+    } else if (Keyboard.isDown(Keyboard.LALT,mods)) {
+      Skill.Brawler.Evade.instant()
+    } else {
+      Skill.Brawler.Dash.instant()
+    }
+  }
+}
+
+class WarriorBinds extends CommonBinds {
+  RBUTTON_TYPE := 1
+
+  onRButtonDown() {
+    this.RBUTTON_TYPE := 0
+    if ( Weapon.isMelee() ) {
+      mods := Keyboard.downMods()
+      if (Keyboard.isDown([Keyboard.LCTRL,Keyboard.LALT],mods)) {
+        Skill.BattleBrand.StingingRiposte.press()
+      } else if (Keyboard.isDown(Keyboard.LCTRL,mods)) {
+        Skill.BattleBrand.Bandage.press()
+      } else if (Keyboard.isDown(Keyboard.LALT,mods)) {
+        ; disabling blow
+        Radial.skill(RadialType.LEFT,5)
+      } else {
+        ; block
+        this.RBUTTON_TYPE:=1
+        Game.Parry.down()
+      }
+    } else if ( Weapon.isBow() ) {
+      mods := Keyboard.downMods()
+      if (Keyboard.isDown(Keyboard.LALT,mods)) {
+        ; disabling shot
+        Radial.skill(RadialType.LEFT,4)
+      }
+    }
+  }
+  onRButtonUp() {
+    if (this.RBUTTON_TYPE = 1) {
+      ; parry
+      Game.Parry.up()
+    }
+  }
+
+  onXButton2() {
+    mods := Keyboard.downMods()
+    if (Keyboard.isDown([Keyboard.LCTRL,Keyboard.LALT],mods)) {
+      Skill.Baresark.Roar.instant()
+    } else if (Keyboard.isDown(Keyboard.LCTRL,mods)) {
+      ; repel (warrior)
+      ; TODO
+      MsgBox, "TODO: Repel?!"
+    } else if (Keyboard.isDown(Keyboard.LALT,mods)) {
+      Skill.BattleBrand.Foebringer.instant()
+    } else {
+      Skill.Baresark.Stampede.instant()
+    }
+  }
+}
+
+RoleBinds := SkirmisherBinds()
+
+; Don't let us activate ourselves
+$~*LButton::
+  RoleBinds.onLButtonDown()
+  return
+
+$~*LButton up::
+  RoleBinds.onLButtonUp()
+  return
+
+$~*RButton::
+  RoleBinds.onRButtonDown()
   return
 
 $~*RButton up::
-  if (RBUTTON_TYPE = 1) {
-    ; parry
-    Game.Parry.up()
-  }
+  RoleBinds.onRButtonUp()
+  return
+
+$*XButton2::
+  RoleBinds.onXButton2()
   return
 
 ; Don't let us activate ourselves
@@ -225,22 +285,5 @@ $*XButton1::
     Skill.Common.HealMount.instant()
   } else {
     Skill.Common.HealSelf.instant()
-  }
-  return
-
-$*XButton2::
-  mods := Keyboard.downMods()
-  if (Keyboard.isDown([Keyboard.LCTRL,Keyboard.LALT],mods)) {
-    ; roar (warrior)
-    Skill.Brawler.Efficiency.instant()
-  } else if (Keyboard.isDown(Keyboard.LCTRL,mods)) {
-    ; repel (warrior)
-    Skill.Brawler.Leap.instant()
-  } else if (Keyboard.isDown(Keyboard.LALT,mods)) {
-    ; foebringer (warrior)
-    Skill.Brawler.Evade.instant()
-  } else {
-    ; stampede (warrior)
-    Skill.Brawler.Dash.instant()
   }
   return

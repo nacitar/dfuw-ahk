@@ -294,18 +294,6 @@ IconDirWrapper(basedir="") {
     return new IconDirWrapperObject(basedir)
 }
 
-class BrawlerSkillObject {
-  static base_dir := IconDirWrapper(IconDirWrapper().get("skill/brawler"))
-  Dash := SkillInfo("Dash",this.base_dir.get("dash.png"))
-  Efficiency := SkillInfo("Efficiency",this.base_dir.get("efficiency.png"))
-  Evade := SkillInfo("Evade",this.base_dir.get("evade.png"))
-  Leap := SkillInfo("Leap",this.base_dir.get("leap.png"))
-  HeightenedReflexes := SkillInfo("Heightened Reflexes"
-                        ,this.base_dir.get("heightened_reflexes.png"))
-}
-BrawlerSkill() {
-  return new BrawlerSkillObject()
-}
 class CommonSkillObject {
   static base_dir := IconDirWrapper(IconDirWrapper().get("skill/common"))
   HealSelf := SkillInfo("Heal Self",this.base_dir.get("heal_self.png"))
@@ -321,7 +309,51 @@ CommonSkill() {
   return new CommonSkillObject()
 }
 
+; skirmisher
+class BrawlerSkillObject {
+  static base_dir := IconDirWrapper(IconDirWrapper().get("skill/brawler"))
+  Dash := SkillInfo("Dash",this.base_dir.get("dash.png"))
+  Efficiency := SkillInfo("Efficiency",this.base_dir.get("efficiency.png"))
+  Evade := SkillInfo("Evade",this.base_dir.get("evade.png"))
+  Leap := SkillInfo("Leap",this.base_dir.get("leap.png"))
+  HeightenedReflexes := SkillInfo("Heightened Reflexes"
+                        ,this.base_dir.get("heightened_reflexes.png"))
+}
+BrawlerSkill() {
+  return new BrawlerSkillObject()
+}
+
+; warrior
+class BattleBrandSkillObject {
+  static base_dir := IconDirWrapper(IconDirWrapper().get("skill/battle-brand"))
+  Bandage := SkillInfo("Bandage",this.base_dir.get("bandage.png"))
+  Foebringer := SkillInfo("Foebringer",this.base_dir.get("foebringer.png"))
+  Spellbane := SkillInfo("Spellbane",this.base_dir.get("spellbane.png"))
+  StingingRiposte := SkillInfo("Stinging Riposte"
+                     ,this.base_dir.get("stinging_riposte.png"))
+  StoicDefense := SkillInfo("Stoic Defense"
+                  ,this.base_dir.get("stoic_defense.png"))
+}
+BattleBrandSkill() {
+  return new BattleBrandSkillObject()
+}
+class BaresarkSkillObject {
+  static base_dir := IconDirWrapper(IconDirWrapper().get("skill/baresark"))
+  Maelstrom := SkillInfo("Maelstrom",this.base_dir.get("maelstrom.png"))
+  Pulverize := SkillInfo("Pulverize",this.base_dir.get("pulverize.png"))
+  Roar := SkillInfo("Roar",this.base_dir.get("roar.png"))
+  Stampede := SkillInfo("Stampede",this.base_dir.get("stampede.png"))
+  Stomp := SkillInfo("Stomp",this.base_dir.get("stomp.png"))
+}
+BaresarkSkill() {
+  return new BaresarkSkillObject()
+}
+
 class Skill {
-  static Brawler := BrawlerSkill()
   static Common := CommonSkill()
+  ; skirmisher
+  static Brawler := BrawlerSkill()
+  ; warrior
+  static BattleBrand := BattleBrandSkill()
+  static Baresark := BaresarkSkill()
 }

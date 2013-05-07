@@ -81,7 +81,14 @@ Skill.Brawler.Dash.set(               RadialBinding(RadialType.RIGHT,6))
 Skill.Brawler.Efficiency.set(         RadialBinding(RadialType.RIGHT,1))
 Skill.Brawler.Evade.set(              RadialBinding(RadialType.RIGHT,7))
 Skill.Brawler.Leap.set(               RadialBinding(RadialType.RIGHT,8))
-;Skill.Brawler.HeightenedReflexes.set( RadialBinding(RadialType.RIGHT,7))
+;Skill.Brawler.HeightenedReflexes.set ...
+
+; TODO: hotkeys
+;Skill.BattleBrand.Bandage.set(        RadialBinding(RadialType.RIGHT,6))
+;Skill.BattleBrand.Foebringer.set(     RadialBinding(RadialType.RIGHT,1))
+;Skill.BattleBrand.Spellbane.set(      RadialBinding(RadialType.RIGHT,7))
+;Skill.BattleBrand.StingingRiposte.set(RadialBinding(RadialType.RIGHT,8))
+;Skill.BattleBrand.StoicDefense.set(   RadialBinding(RadialType.RIGHT,8))
 
 Skill.Common.HealSelf.set(        RadialBinding(RadialType.RIGHT,2))
 Skill.Common.HealMount.set(       RadialBinding(RadialType.LEFT ,8))
