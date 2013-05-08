@@ -367,10 +367,10 @@ BattleBrandSkill() {
 class BaresarkSkillObject {
   static base_dir := IconDirWrapper(IconDirWrapper().get("skill/baresark"))
   Maelstrom := SkillInfo("Maelstrom",this.base_dir.get("maelstrom.png"))
-  Pulverize := SkillInfo("Pulverize",this.base_dir.get("pulverize.png"))
   Roar := SkillInfo("Roar",this.base_dir.get("roar.png"))
   Stampede := SkillInfo("Stampede",this.base_dir.get("stampede.png"))
   Repel := SkillInfo("Repel",this.base_dir.get("repel.png"))
+  Pulverize := SkillInfo("Pulverize",this.base_dir.get("pulverize.png"))
 }
 BaresarkSkill() {
   return new BaresarkSkillObject()

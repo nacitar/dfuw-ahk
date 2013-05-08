@@ -93,42 +93,47 @@ $~*XButton2::
   Role.Binds.onXButton2()
   return
 
-; Don't let us activate ourselves
-$*`::
-  if (Keyboard.isDown(Keyboard.LALT)) {
-    Item.use(ItemType.SKINNER)
-  } else {
-    Game.ResetSkill.press() 
-  }
+$~*`::
+  Role.Binds.onGrave()
   return
   
-; let 0 through, we want to type
-$~*0::
-  if (Keyboard.isDown(Keyboard.LALT)) {
-    Item.use(ItemType.MOUNT)
-  }
-  return
-
 $~*1::
-  if (Keyboard.isDown(Keyboard.LALT)) {
-    Item.use(ItemType.FOOD)
-  }
+  Role.Binds.on1()
   return
 
 $~*2::
-  if (Keyboard.isDown(Keyboard.LALT)) {
-    Item.use(ItemType.HEALTH_POT)
-  }
+  Role.Binds.on2()
   return
 
 $~*3::
-  if (Keyboard.isDown(Keyboard.LALT)) {
-    Item.use(ItemType.STAMINA_POT)
-  }
+  Role.Binds.on3()
   return
 
 $~*4::
-  if (Keyboard.isDown(Keyboard.LALT)) {
-    Item.use(ItemType.MANA_POT)
-  }
+  Role.Binds.on4()
   return
+
+$~*5::
+  Role.Binds.on5()
+  return
+
+$~*6::
+  Role.Binds.on6()
+  return
+
+$~*7::
+  Role.Binds.on7()
+  return
+
+$~*8::
+  Role.Binds.on8()
+  return
+
+$~*9::
+  Role.Binds.on9()
+  return
+
+$~*0::
+  Role.Binds.on0()
+  return
+

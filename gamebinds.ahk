@@ -76,7 +76,11 @@ Game.AutoRun := Binding("NumpadSub")
 ;; User Script - Skill Placement
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+
 ; these must be set _after_ the radials bound above
+
+; Skirmisher Skills
+; (left 7 is free)
 Skill.Brawler.Dash.set(               RadialBinding(RadialType.RIGHT,6))
 Skill.Brawler.Efficiency.set(         RadialBinding(RadialType.RIGHT,1))
 Skill.Brawler.Evade.set(              RadialBinding(RadialType.RIGHT,7))
@@ -88,18 +92,21 @@ Skill.Deadeye.Puncture.set(       RadialBinding(RadialType.LEFT,2))
 Skill.Deadeye.Salvo.set(          RadialBinding(RadialType.LEFT,6))
 ;Skill.Deadeye.Trueshot.set ...
 
-; TODO: hotkeys
-;Skill.BattleBrand.Bandage.set ...
-;Skill.BattleBrand.Foebringer.set ...
-;Skill.BattleBrand.Spellbane.set ...
-;Skill.BattleBrand.StingingRiposte.set ...
-;Skill.BattleBrand.StoicDefense.set ...
-;Skill.Baresark.Maelstrom.set ...
-;Skill.Baresark.Pulverize.set ...
-;Skill.Baresark.Roar.set ...
-;Skill.Baresark.Stampede.set ...
-;Skill.Baresark.Repel.set ...
+; Warrior Skills
+; (none free)
+Skill.BattleBrand.Bandage.set(        RadialBinding(RadialType.RIGHT,1))
+Skill.BattleBrand.Foebringer.set(     RadialBinding(RadialType.LEFT ,6))
+Skill.BattleBrand.Spellbane.set(      RadialBinding(RadialType.RIGHT,8))
+Skill.BattleBrand.StingingRiposte.set(RadialBinding(RadialType.RIGHT,7))
+Skill.BattleBrand.StoicDefense.set(   RadialBinding(RadialType.RIGHT,6))
 
+Skill.Baresark.Maelstrom.set( RadialBinding(RadialType.LEFT,2))
+Skill.Baresark.Roar.set(      RadialBinding(RadialType.LEFT,1)) 
+Skill.Baresark.Stampede.set(  RadialBinding(RadialType.LEFT,7))
+Skill.Baresark.Repel.set(     RadialBinding(RadialType.LEFT,3))
+;Skill.Baresark.Pulverize.set ...
+
+; Common Skills
 Skill.Common.HealSelf.set(        RadialBinding(RadialType.RIGHT,2))
 Skill.Common.HealMount.set(       RadialBinding(RadialType.LEFT ,8))
 Skill.Common.ManaToStamina.set(   RadialBinding(RadialType.RIGHT,3))

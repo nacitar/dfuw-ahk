@@ -213,6 +213,8 @@ class Keyboard {
                         , Keyboard.LALT
                         , Keyboard.LWIN ]
 
+  static CACHED_DOWN_MODS := []
+
   ; Returns the subset of the passed key array that corresponds to down keys.
   getDown(key_array) {
     key_array := make_array(key_array)
@@ -227,7 +229,7 @@ class Keyboard {
   }
 
   ; Convenience to get down modifiers
-  downMods() {
+  downMod() {
     return this.getDown(Keyboard.ALL_MODS)
   }
 
@@ -262,6 +264,20 @@ class Keyboard {
       }
     }
     return true
+  }
+
+  ; Caches the currently down modifiers 
+  cacheMod() {
+    Keyboard.CACHED_DOWN_MODS := this.downMod()
+  }
+
+  ; Like isDown, but instead of checking the physical state of keys if no down
+  ; key array is specified, it uses the last cached mods.
+  isDownMod(key_array,mods_array=-1) {
+    if (mods_array = -1) {
+      mods_array := Keyboard.CACHED_DOWN_MODS
+    }
+    return this.isDown(key_array,mods_array)
   }
 }
 
