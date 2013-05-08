@@ -17,10 +17,10 @@
 #Include %A_ScriptDir%/gamebinds.ahk
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; User Script - Logic
+;; User Script - Role Bindings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; Bindings for all classes (can be overridden)
+; Bindings for all roles (can be overridden)
 class CommonBinds {
   ; Keep up with modifiers on the down so we do the correct up
   LBUTTON_TYPE := 1
@@ -182,7 +182,6 @@ class WarriorBinds extends CommonBinds {
     }
   }
 }
-
 
 ; Setting these bindings for the Role object so it can swap them out.
 Role.BindObjects[Role.SKIRMISHER] := SkirmisherBinds()

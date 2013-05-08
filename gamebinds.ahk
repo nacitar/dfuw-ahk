@@ -17,7 +17,7 @@
 #Include %A_ScriptDir%/dfuw.ahk
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; User Script - Key Bindings
+;; Game Settings - Key Bindings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Game.Radial[RadialType.LEFT] := Binding("q")

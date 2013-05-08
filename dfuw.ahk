@@ -300,6 +300,10 @@ IconDirWrapper(basedir="") {
     return new IconDirWrapperObject(basedir)
 }
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; In-Game Skill List
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 class CommonSkillObject {
   static base_dir := IconDirWrapper(IconDirWrapper().get("skill/common"))
   HealSelf := SkillInfo("Heal Self",this.base_dir.get("heal_self.png"))

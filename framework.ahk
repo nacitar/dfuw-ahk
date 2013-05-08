@@ -266,7 +266,6 @@ class Keyboard {
 }
 
 ; A class for key bindings.
-; Provides .emit(), .down.emit(), .up.emit()
 class BindingObject {
   static PRESS_DURATION_MS := 5
 

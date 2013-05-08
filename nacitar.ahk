@@ -31,35 +31,32 @@ SetTitleMatchMode, 3
 #SingleInstance force
 #NoEnv
 
+#HotkeyInterval 1 
+#MaxHotkeysPerInterval 2000
+
 ; On first run, make the darkfall window not always on top.  If you restart
 ; your game, reloading this script will set this again.
 WinSet, AlwaysOnTop, Off, Darkfall Unholy Wars
 
-#HotkeyInterval 1 
-#MaxHotkeysPerInterval 2000
-
-
-; Default role
-Role.set(RoleType.SKIRMISHER)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; User Script - Logic
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ; Keep numlock on!
 SetNumLockState, AlwaysOn
 
+; Default role (TODO: make this save/restore from file?)
+; TODO: allow on-the-fly changing
+Role.set(RoleType.SKIRMISHER)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; User Hotkeys
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; block the windows key!
 $*LWin::
   return
 
-; Forward numlock presses to numpad -
 $*NumLock::
   Game.AutoRun.press()
   return
 
-; Don't let us activate ourselves
 $~*LButton::
   Role.Binds.onLButtonDown()
   return
@@ -76,11 +73,7 @@ $~*RButton up::
   Role.Binds.onRButtonUp()
   return
 
-$*XButton1::
-  Role.Binds.onXButton1()
-  return
-
-$*MButton::
+$~*MButton::
   Role.Binds.onMButton()
   return
 
@@ -90,6 +83,10 @@ $~*WheelUp::
 
 $~*WheelDown::
   Role.Binds.onWheelDown()
+  return
+
+$~*XButton1::
+  Role.Binds.onXButton1()
   return
 
 $~*XButton2::
