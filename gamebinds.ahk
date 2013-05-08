@@ -109,6 +109,3 @@ Skill.Common.DisablingBlow.set(   RadialBinding(RadialType.LEFT ,5))
 Skill.Common.DisablingShot.set(   RadialBinding(RadialType.LEFT ,4))
 
 
-; Default role
-Role.set(RoleType.SKIRMISHER)
-

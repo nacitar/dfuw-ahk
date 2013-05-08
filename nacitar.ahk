@@ -23,7 +23,7 @@
 ; Don't block clicks! Darkfall gets this still, but you can't click out!
 
 
-#Include %A_ScriptDir%/settings.ahk
+#Include %A_ScriptDir%/nacitar_binds.ahk
 
 ; match exact titles only
 SetTitleMatchMode, 3
@@ -38,6 +38,10 @@ WinSet, AlwaysOnTop, Off, Darkfall Unholy Wars
 #HotkeyInterval 1 
 #MaxHotkeysPerInterval 2000
 
+
+; Default role
+Role.set(RoleType.SKIRMISHER)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User Script - Logic
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -45,213 +49,51 @@ WinSet, AlwaysOnTop, Off, Darkfall Unholy Wars
 ; Keep numlock on!
 SetNumLockState, AlwaysOn
 
-class CommonBinds {
-  ; Keep up with modifiers on the down so we do the correct up
-  LBUTTON_TYPE := 1
-
-  onLButtonDown() {
-    this.LBUTTON_TYPE := 0
-    mods := Keyboard.downMods()
-    if (Keyboard.isDown([Keyboard.LCTRL,Keyboard.LALT],mods)) {
-      Skill.Common.HealthToMana.instant()
-    } else if (Keyboard.isDown(Keyboard.LCTRL,mods)) {
-      Skill.Common.StaminaToHealth.instant()
-    } else if (Keyboard.isDown(Keyboard.LALT,mods)) {
-      Skill.Common.ManaToStamina.instant()
-    } else {
-      ; No mods; plain...
-      this.LBUTTON_TYPE := 1
-      ; press activate, but don't release
-      Game.RadialActivate[RadialType.LEFT].down()
-    }
-  }
-  onLButtonUp() {
-    ; release the activate key if it was down
-    if (this.LBUTTON_TYPE = 1) {
-      Game.RadialActivate[RadialType.LEFT].up()
-      this.LBUTTON_TYPE := 0
-    }
-  }
-  onRButtonDown() {
-  }
-  onRButtonUp() {
-  }
-  onMButton() {
-    mods := Keyboard.downMods()
-    if (Keyboard.isDown(Keyboard.LALT,mods)) {
-      Weapon.set(ItemType.STAFF)
-    } else {
-      Weapon.set(ItemType.BOW)
-    }
-  }
-  onWheelUp() {
-    ; if alt is down, just let the normal function happen (map zooming, etc)
-    if (!Keyboard.isDown(Keyboard.LALT)) {
-      Weapon.set(ItemType.TWO_HANDED)
-    }
-  }
-  onWheelDown() {
-    ; if alt is down, just let the normal function happen (map zooming, etc)
-    if (!Keyboard.isDown(Keyboard.LALT)) {
-      Weapon.set(ItemType.ONE_HANDED)
-    }
-  }
-  onXButton1() {
-    mods := Keyboard.downMods()
-    if (Keyboard.isDown(Keyboard.LALT,mods)) {
-      Skill.Common.HealMount.instant()
-    } else {
-      Skill.Common.HealSelf.instant()
-    }
-  }
-  onXButton2() {
-  }
-}
-class SkirmisherBindsObject extends CommonBinds {
-  RBUTTON_TYPE := 1
-
-  onRButtonDown() {
-    this.RBUTTON_TYPE := 0
-    if ( Weapon.isMelee() ) {
-      mods := Keyboard.downMods()
-      if (Keyboard.isDown(Keyboard.LALT,mods)) {
-        Skill.Common.DisablingBlow.press()
-      } else {
-        this.RBUTTON_TYPE := 1
-        Game.Parry.down()
-      }
-    } else if ( Weapon.isBow() ) {
-      mods := Keyboard.downMods()
-      if (Keyboard.isDown([Keyboard.LCTRL,Keyboard.LALT],mods)) {
-        Skill.Deadeye.ExplosiveArrow.press()
-      } else if (Keyboard.isDown(Keyboard.LCTRL,mods)) {
-        Skill.Deadeye.Puncture.press()
-      } else if (Keyboard.isDown(Keyboard.LWIN,mods)) {
-        Skill.Deadeye.Salvo.press()
-      } else if (Keyboard.isDown(Keyboard.LALT,mods)) {
-        Skill.Common.DisablingShot.press()
-      } else {
-        Skill.Deadeye.ExploitWeakness.press()
-      }
-    }
-  }
-
-  onRButtonUp() {
-    if (this.RBUTTON_TYPE = 1) {
-      Game.Parry.up()
-      this.RBUTTON_TYPE := 0
-    }
-  }
-
-  onXButton2() {
-    mods := Keyboard.downMods()
-    if (Keyboard.isDown([Keyboard.LCTRL,Keyboard.LALT],mods)) {
-      Skill.Brawler.Efficiency.instant()
-    } else if (Keyboard.isDown(Keyboard.LCTRL,mods)) {
-      Skill.Brawler.Leap.instant()
-    } else if (Keyboard.isDown(Keyboard.LALT,mods)) {
-      Skill.Brawler.Evade.instant()
-    } else {
-      Skill.Brawler.Dash.instant()
-    }
-  }
-}
-SkirmisherBinds() {
-  return new SkirmisherBindsObject()
-}
-
-class WarriorBinds extends CommonBinds {
-  RBUTTON_TYPE := 1
-
-  onRButtonDown() {
-    this.RBUTTON_TYPE := 0
-    if ( Weapon.isMelee() ) {
-      mods := Keyboard.downMods()
-      if (Keyboard.isDown([Keyboard.LCTRL,Keyboard.LALT],mods)) {
-        Skill.BattleBrand.StingingRiposte.press()
-      } else if (Keyboard.isDown(Keyboard.LCTRL,mods)) {
-        Skill.BattleBrand.Bandage.press()
-      } else if (Keyboard.isDown(Keyboard.LALT,mods)) {
-        Skill.Common.DisablingBlow.press()
-      } else {
-        this.RBUTTON_TYPE:=1
-        Game.Parry.down()
-      }
-    } else if ( Weapon.isBow() ) {
-      mods := Keyboard.downMods()
-      if (Keyboard.isDown(Keyboard.LALT,mods)) {
-        Skill.Common.DisablingShot.press()
-      }
-    }
-  }
-  onRButtonUp() {
-    if (this.RBUTTON_TYPE = 1) {
-      Game.Parry.up()
-      this.RBUTTON_TYPE := 0
-    }
-  }
-
-  onXButton2() {
-    mods := Keyboard.downMods()
-    if (Keyboard.isDown([Keyboard.LCTRL,Keyboard.LALT],mods)) {
-      Skill.Baresark.Roar.instant()
-    } else if (Keyboard.isDown(Keyboard.LCTRL,mods)) {
-      Skill.Baresark.Repel.instant()
-    } else if (Keyboard.isDown(Keyboard.LALT,mods)) {
-      Skill.BattleBrand.Foebringer.instant()
-    } else {
-      Skill.Baresark.Stampede.instant()
-    }
-  }
-}
-
-
-RoleBinds := SkirmisherBinds()
 
 ; block the windows key!
-*LWin::
+$*LWin::
   return
 
 ; Forward numlock presses to numpad -
-*NumLock::
+$*NumLock::
   Game.AutoRun.press()
   return
 
 ; Don't let us activate ourselves
 $~*LButton::
-  RoleBinds.onLButtonDown()
+  Role.Binds.onLButtonDown()
   return
 
 $~*LButton up::
-  RoleBinds.onLButtonUp()
+  Role.Binds.onLButtonUp()
   return
 
 $~*RButton::
-  RoleBinds.onRButtonDown()
+  Role.Binds.onRButtonDown()
   return
 
 $~*RButton up::
-  RoleBinds.onRButtonUp()
+  Role.Binds.onRButtonUp()
   return
 
 $*XButton1::
-  RoleBinds.onXButton1()
+  Role.Binds.onXButton1()
   return
 
-*MButton::
-  RoleBinds.onMButton()
+$*MButton::
+  Role.Binds.onMButton()
   return
 
-~*WheelUp::
-  RoleBinds.onWheelUp()
+$~*WheelUp::
+  Role.Binds.onWheelUp()
   return
 
-~*WheelDown::
-  RoleBinds.onWheelDown()
+$~*WheelDown::
+  Role.Binds.onWheelDown()
   return
 
 $~*XButton2::
-  RoleBinds.onXButton2()
+  Role.Binds.onXButton2()
   return
 
 ; Don't let us activate ourselves
@@ -264,31 +106,31 @@ $*`::
   return
   
 ; let 0 through, we want to type
-~*0::
+$~*0::
   if (Keyboard.isDown(Keyboard.LALT)) {
     Item.use(ItemType.MOUNT)
   }
   return
 
-~*1::
+$~*1::
   if (Keyboard.isDown(Keyboard.LALT)) {
     Item.use(ItemType.FOOD)
   }
   return
 
-~*2::
+$~*2::
   if (Keyboard.isDown(Keyboard.LALT)) {
     Item.use(ItemType.HEALTH_POT)
   }
   return
 
-~*3::
+$~*3::
   if (Keyboard.isDown(Keyboard.LALT)) {
     Item.use(ItemType.STAMINA_POT)
   }
   return
 
-~*4::
+$~*4::
   if (Keyboard.isDown(Keyboard.LALT)) {
     Item.use(ItemType.MANA_POT)
   }

@@ -179,9 +179,11 @@ class RoleType { ; enum
 }
 class Role {
   static CURRENT := RoleType.SKIRMISHER 
-
+  static Binds := ""
+  static BindObjects := []
   set(role_type) {
     Role.CURRENT := role_type
+    Role.Binds := Role.BindObjects[role_type]
   }
 
   isSkirmisher() {
@@ -200,6 +202,10 @@ class Role {
     return (Role.CURRENT = RoleType.PRIMALIST)
   }
 }
+Role.BindObjects[Role.SKIRMISHER] := ""
+Role.BindObjects[Role.WARRIOR] := ""
+Role.BindObjects[Role.ELEMENTALIST] := ""
+Role.BindObjects[Role.PRIMALIST] := ""
 
 class Weapon {
   ; Stores the currently equipped weapon
