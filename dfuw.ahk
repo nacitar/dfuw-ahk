@@ -304,6 +304,10 @@ class CommonSkillObject {
                      ,this.base_dir.get("stamina_to_health.png"))
   HealthToMana := SkillInfo("Health To Mana"
                   ,this.base_dir.get("health_to_mana.png"))
+  DisablingBlow := SkillInfo("Disabling Blow"
+                   ,this.base_dir.get("disabling_blow.png"))
+  DisablingShot := SkillInfo("Disabling Shot"
+                   ,this.base_dir.get("disabling_shot.png"))
 }
 CommonSkill() {
   return new CommonSkillObject()
@@ -321,6 +325,19 @@ class BrawlerSkillObject {
 }
 BrawlerSkill() {
   return new BrawlerSkillObject()
+}
+class DeadeyeSkillObject {
+  static base_dir := IconDirWrapper(IconDirWrapper().get("skill/deadeye"))
+  ExploitWeakness := SkillInfo("Exploit Weakness"
+                     ,this.base_dir.get("exploit_weakness.png"))
+  ExplosiveArrow := SkillInfo("Explosive Arrow"
+                    ,this.base_dir.get("explosive_arrow.png"))
+  Puncture := SkillInfo("Puncture",this.base_dir.get("puncture.png"))
+  Salvo := SkillInfo("Salvo",this.base_dir.get("salvo.png"))
+  Trueshot := SkillInfo("Trueshot",this.base_dir.get("trueshot.png"))
+}
+DeadeyeSkill() {
+  return new DeadeyeSkillObject()
 }
 
 ; warrior
@@ -343,7 +360,7 @@ class BaresarkSkillObject {
   Pulverize := SkillInfo("Pulverize",this.base_dir.get("pulverize.png"))
   Roar := SkillInfo("Roar",this.base_dir.get("roar.png"))
   Stampede := SkillInfo("Stampede",this.base_dir.get("stampede.png"))
-  Stomp := SkillInfo("Stomp",this.base_dir.get("stomp.png"))
+  Repel := SkillInfo("Repel",this.base_dir.get("repel.png"))
 }
 BaresarkSkill() {
   return new BaresarkSkillObject()
@@ -353,6 +370,7 @@ class Skill {
   static Common := CommonSkill()
   ; skirmisher
   static Brawler := BrawlerSkill()
+  static Deadeye := DeadeyeSkill()
   ; warrior
   static BattleBrand := BattleBrandSkill()
   static Baresark := BaresarkSkill()
