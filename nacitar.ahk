@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+; NOTE: you can't declare variables _after_ even one hotkey is declared, it 
+; will silently ignore it.
 #Include %A_ScriptDir%/settings.ahk
 ; match exact titles only
 SetTitleMatchMode, 3
@@ -30,18 +32,9 @@ WinSet, AlwaysOnTop, Off, Darkfall Unholy Wars
 ;; User Script - Logic
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; block the windows key!
-*LWin::
-  return
 
 ; Keep numlock on!
 SetNumLockState, AlwaysOn
-
-; Forward numlock presses to numpad -
-*NumLock::
-  Game.AutoRun.press()
-  return
-
 ; You can't block mouse buttons, so unset mbutton skill selection or
 ; you'll end up accidentally changing items!
 
@@ -49,8 +42,6 @@ SetNumLockState, AlwaysOn
 ; Don't let us activate ourselves either
 
 ; Keep up with modifiers on the down so we do the right up
-LBUTTON_TYPE:=1
-RBUTTON_TYPE:=1
 
 class CommonBinds {
   LBUTTON_TYPE := 1
@@ -78,8 +69,7 @@ class CommonBinds {
     }
   }
 }
-
-class SkirmisherBinds extends CommonBinds {
+class SkirmisherBindsObject extends CommonBinds {
   RBUTTON_TYPE := 1
 
   onRButtonDown() {
@@ -136,6 +126,9 @@ class SkirmisherBinds extends CommonBinds {
     }
   }
 }
+SkirmisherBinds() {
+  return new SkirmisherBindsObject()
+}
 
 class WarriorBinds extends CommonBinds {
   RBUTTON_TYPE := 1
@@ -187,7 +180,17 @@ class WarriorBinds extends CommonBinds {
   }
 }
 
+
 RoleBinds := SkirmisherBinds()
+
+; block the windows key!
+*LWin::
+  return
+
+; Forward numlock presses to numpad -
+*NumLock::
+  Game.AutoRun.press()
+  return
 
 ; Don't let us activate ourselves
 $~*LButton::
@@ -206,7 +209,7 @@ $~*RButton up::
   RoleBinds.onRButtonUp()
   return
 
-$*XButton2::
+$~*XButton2::
   RoleBinds.onXButton2()
   return
 
