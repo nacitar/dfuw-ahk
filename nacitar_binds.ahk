@@ -312,6 +312,6 @@ WarriorBinds() {
 }
 
 ; Setting these bindings for the Role object so it can swap them out.
-Role.BindObjects[Role.SKIRMISHER] := SkirmisherBinds()
-Role.BindObjects[Role.WARRIOR] := WarriorBinds()
+Role.BindObjects[RoleType.SKIRMISHER] := SkirmisherBinds()
+Role.BindObjects[RoleType.WARRIOR] := WarriorBinds()
 
