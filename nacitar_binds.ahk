@@ -248,16 +248,11 @@ SkirmisherBinds() {
 class WarriorBindsObject extends CommonBinds {
   onRButtonDown(update_cache=true) {
     this.updateCache(update_cache)
-    if (!base.onRButtonDown())
-    {
-      if (Keyboard.isDownMod(Keyboard.LWIN)) {
-        Skill.Baresark.Maelstrom.instant()
-        return true
-      }
-    } else {
+    if (Keyboard.isDownMod(Keyboard.LWIN)) {
+      Skill.Baresark.Maelstrom.instant()
       return true
-    }
-    return false
+    } 
+    return base.onRButtonDown()
   }
   onXButton1(update_cache=true) {
     this.updateCache(update_cache)
