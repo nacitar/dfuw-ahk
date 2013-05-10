@@ -190,25 +190,20 @@ class CommonBinds {
 class SkirmisherBindsObject extends CommonBinds {
   onRButtonDown(update_cache=true) {
     this.updateCache(update_cache)
-    if (!base.onRButtonDown())
-    {
-      if (Weapon.isBow()) {
-        ; NOTE: LALT bind is covered in base
-        if (Keyboard.isDownMod([Keyboard.LCTRL,Keyboard.LALT])) {
-          Skill.Deadeye.ExplosiveArrow.press()
-        } else if (Keyboard.isDownMod(Keyboard.LCTRL)) {
-          Skill.Deadeye.Puncture.press()
-        } else if (Keyboard.isDownMod(Keyboard.LWIN)) {
-          Skill.Deadeye.Salvo.press()
-        } else {
-          Skill.Deadeye.ExploitWeakness.press()
-        }
-        return true
+    if (Weapon.isBow()) {
+      if (Keyboard.isDownMod([Keyboard.LCTRL,Keyboard.LALT])) {
+        Skill.Deadeye.ExplosiveArrow.press()
+      } else if (Keyboard.isDownMod(Keyboard.LCTRL)) {
+        Skill.Deadeye.Puncture.press()
+      } else if (Keyboard.isDownMod(Keyboard.LWIN)) {
+        Skill.Deadeye.Salvo.press()
+      ; NOTE: LALT bind is covered in base
+      } else if (!base.onRButtonDown()) {
+        Skill.Deadeye.ExploitWeakness.press()
       }
-    } else {
       return true
     }
-    return false
+    return base.onRButtonDown()
   }
   onXButton1(update_cache=true) {
     this.updateCache(update_cache)
