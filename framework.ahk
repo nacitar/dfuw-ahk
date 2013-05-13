@@ -285,24 +285,21 @@ class Keyboard {
 class BindingObject {
   static PRESS_DURATION_MS := 5
 
-  __New(key,mod_key_array) {
+  __New(key_array) {
     down_state_array := []
     up_state_array := []
 
     ; If this isn't a dummy binding
-    if (key != -1)
+    if (key_array != -1)
     {
-      up_state_array.Insert(KeyState(key,KeyPosition.UP))
-
-      Loop, % mod_key_array.MaxIndex() {
-        mod_key := mod_key_array[A_Index]
+      Loop, % key_array.MaxIndex() {
+        mod_key := key_array[A_Index]
+        mod_key := validate_key_arg("BindingObject()",mod_key)
         down_state_array.Insert(KeyState(mod_key,KeyPosition.DOWN))
-        ; 1 is first index, so this puts modifiers releases
-        ; after the key up, but in reverse order.
-        up_state_array.Insert(2,KeyState(mod_key,KeyPosition.UP))
+        ; 1 is first index, so this puts modifiers release at the front
+        ; thus in reverse order
+        up_state_array.Insert(1,KeyState(mod_key,KeyPosition.UP))
       }
-
-      down_state_array.Insert(KeyState(key,KeyPosition.DOWN))
     }
 
     ; Now that we have the arrays, we can make sequences with them
@@ -331,15 +328,13 @@ class BindingObject {
     this.press()
   }
 }
-Binding(key=-1,mod_key_array=-1) {
-  if (key != -1) {
-    key := validate_key_arg("Binding()",key)
+Binding(key_array=-1) {
+  if (key_array != -1) {
+    new_key_array := []
+    new_key_array := make_array(key_array)
+    key_array := new_key_array
   }
-  if (mod_key_array = -1) {
-    mod_key_array := []
-  }
-  mod_key_array := make_array(mod_key_array)
-  return new BindingObject(key,mod_key_array)
+  len := key_array.MaxIndex()
+  return new BindingObject(key_array)
 }
-
 
