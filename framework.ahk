@@ -221,6 +221,7 @@ class Keyboard {
     down_array := []
     Loop, % key_array.MaxIndex() {
       key := key_array[A_Index]
+      key := validate_key_arg("Keyboard.getDown()",key)
       if (key.isDown()) {
         down_array.Insert(key)
       }
