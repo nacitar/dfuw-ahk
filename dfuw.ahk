@@ -376,6 +376,37 @@ BaresarkSkill() {
   return new BaresarkSkillObject()
 }
 
+class LifeSkillObject() {
+  static base_dir := IconDirWrapper(IconDirWrapper().get("skill/life"))
+  Consecrate := SkillInfo("Consecrate",this.base_dir.get("consecrate.png"))
+  ExaltedSacrifice := SkillInfo("Exalted Sacrifice"
+                      ,this.base_dir.get("exalted_sacrifice.png"))
+  HealingBlast := SkillInfo("Healing Blast"
+                  ,this.base_dir.get("healing_blast.png"))
+  Resuscitation := SkillInfo("Resuscitation"
+                   ,this.base_dir.get("resuscitation.png"))
+  SpiritBond := SkillInfo("Spirit Bond"
+                   ,this.base_dir.get("spirit_bond.png"))
+}
+LifeSkill() {
+  return new LifeSkillObject()
+}
+class LawSkillObject() {
+  static base_dir := IconDirWrapper(IconDirWrapper().get("skill/law"))
+  Bastion := SkillInfo("Bastion",this.base_dir.get("bastion.png"))
+  Invigoration := SkillInfo("Invigoration"
+                  ,this.base_dir.get("invigoration.png"))
+  PrimalSurge := SkillInfo("Primal Surge"
+                  ,this.base_dir.get("primal_surge.png"))
+  VirtuousWrath := SkillInfo("Virtuous Wrath"
+                  ,this.base_dir.get("virtuous_wrath.png"))
+  WallOfRighteousForce := SkillInfo("Wall Of Righteous Force"
+                  ,this.base_dir.get("wall_of_righteous_force.png"))
+}
+LawSkill() {
+  return new LawSkillObject()
+}
+
 class Skill {
   static Common := CommonSkill()
   ; skirmisher
@@ -384,4 +415,7 @@ class Skill {
   ; warrior
   static BattleBrand := BattleBrandSkill()
   static Baresark := BaresarkSkill()
+  ; primalist
+  static Life := LifeSkill()
+  static Law := LawSkill()
 }

@@ -106,6 +106,9 @@ Skill.Baresark.Stampede.set(  RadialBinding(RadialType.LEFT,7))
 Skill.Baresark.Repel.set(     RadialBinding(RadialType.LEFT,3))
 ;Skill.Baresark.Pulverize.set ...
 
+; Primalist Skills
+; TODO
+
 ; Common Skills
 Skill.Common.HealSelf.set(        RadialBinding(RadialType.RIGHT,2))
 Skill.Common.HealMount.set(       RadialBinding(RadialType.LEFT ,8))
