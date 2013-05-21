@@ -376,7 +376,7 @@ BaresarkSkill() {
   return new BaresarkSkillObject()
 }
 
-class LifeSkillObject() {
+class LifeSkillObject {
   static base_dir := IconDirWrapper(IconDirWrapper().get("skill/life"))
   Consecrate := SkillInfo("Consecrate",this.base_dir.get("consecrate.png"))
   ExaltedSacrifice := SkillInfo("Exalted Sacrifice"
@@ -391,7 +391,7 @@ class LifeSkillObject() {
 LifeSkill() {
   return new LifeSkillObject()
 }
-class LawSkillObject() {
+class LawSkillObject {
   static base_dir := IconDirWrapper(IconDirWrapper().get("skill/law"))
   Bastion := SkillInfo("Bastion",this.base_dir.get("bastion.png"))
   Invigoration := SkillInfo("Invigoration"

@@ -43,8 +43,9 @@ SetNumLockState, AlwaysOn
 
 ; Default role (TODO: make this save/restore from file?)
 ; TODO: allow on-the-fly changing
-Role.set(RoleType.SKIRMISHER)
+;Role.set(RoleType.SKIRMISHER)
 ;Role.set(RoleType.WARRIOR)
+Role.set(RoleType.PRIMALIST)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User Hotkeys
@@ -62,6 +63,9 @@ $~*F5::
   return
 $~*F6::
   ifAltSetRole(RoleType.WARRIOR)
+  return
+$~*F7::
+  ifAltSetRole(RoleType.PRIMALIST)
   return
 
 ; block the windows key!

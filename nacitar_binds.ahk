@@ -301,7 +301,67 @@ WarriorBinds() {
   return new WarriorBindsObject()
 }
 
+; Bindings for Primalists
+class PrimalistBindsObject extends CommonBinds {
+  onMButton(update_cache=true) {
+    this.updateCache(update_cache)
+    if (Keyboard.isDownMod(Keyboard.LALT)) {
+      Weapon.set(ItemType.STAFF)
+    } else {
+      Weapon.set(ItemType.BOW)
+    }
+    return true
+  }
+  onRButtonDown(update_cache=true) {
+    this.updateCache(update_cache)
+    if (!base.onRButtonDown()) {
+      Skill.Law.VirtuousWrath.press()
+    }
+    return true
+  }
+  onXButton1(update_cache=true) {
+    this.updateCache(update_cache)
+    if (Keyboard.isDownMod(Keyboard.LCTRL)) {
+      Skill.Common.HealMount.instant()
+    } else {
+      Skill.Common.HealSelf.instant()
+    }
+    return true
+  }
+  onXButton2(update_cache=true) {
+    this.updateCache(update_cache)
+    if (Keyboard.isDownMod(Keyboard.LWIN)) {
+      Skill.Life.Consecrate.press()
+    } else if (Keyboard.isDownMod(Keyboard.LALT)) {
+      Skill.Life.Resuscitation.press()
+    } else {
+      Skill.Life.ExaltedSacrifice.press()
+    }
+    return true
+  }
+  on1(update_cache=true) {
+    this.updateCache(update_cache)
+    if (Keyboard.isDownMod(Keyboard.LWIN)) {
+      Skill.Law.Bastion.instant()
+      return true
+    }
+    return base.on1(false)
+  }
+  on2(update_cache=true) {
+    this.updateCache(update_cache)
+    if (Keyboard.isDownMod(Keyboard.LWIN)) {
+      Skill.Law.Invigoration.instant()
+      return true
+    } 
+    return base.on2(false)
+  }
+}
+PrimalistBinds() {
+  return new PrimalistBindsObject()
+}
+
 ; Setting these bindings for the Role object so it can swap them out.
 Role.BindObjects[RoleType.SKIRMISHER] := SkirmisherBinds()
 Role.BindObjects[RoleType.WARRIOR] := WarriorBinds()
+Role.BindObjects[RoleType.PRIMALIST] := PrimalistBinds()
 

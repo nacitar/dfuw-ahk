@@ -58,6 +58,7 @@ Game.RadialSkill[RadialType.RIGHT][8] := Binding([Keyboard.RCTRL,"Numpad8"])
 ; Which quick item slots for which weapons?
 ;Game.ItemSlot[ItemType.STAFF] := 0
 Game.ItemSlot[ItemType.BOW] := 1
+Game.ItemSlot[ItemType.STAFF] := 2 ; shared with 2h
 Game.ItemSlot[ItemType.TWO_HANDED] := 2
 Game.ItemSlot[ItemType.ONE_HANDED] := 3
 Game.ItemSlot[ItemType.MOUNT] := 4
@@ -107,7 +108,13 @@ Skill.Baresark.Repel.set(     RadialBinding(RadialType.LEFT,3))
 ;Skill.Baresark.Pulverize.set ...
 
 ; Primalist Skills
-; TODO
+Skill.Life.ExaltedSacrifice.set( RadialBinding(RadialType.LEFT,3))
+Skill.Life.Consecrate.set(       RadialBinding(RadialType.LEFT,6))
+Skill.Life.Resuscitation.set(    RadialBinding(RadialType.LEFT,2))
+
+Skill.Law.VirtuousWrath.set( RadialBinding(RadialType.LEFT,1))
+Skill.Law.Bastion.set(       RadialBinding(RadialType.RIGHT,8))
+Skill.Law.Invigoration.set(  RadialBinding(RadialType.RIGHT,1))
 
 ; Common Skills
 Skill.Common.HealSelf.set(        RadialBinding(RadialType.RIGHT,2))
