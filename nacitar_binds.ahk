@@ -303,6 +303,22 @@ WarriorBinds() {
 
 ; Bindings for Primalists
 class PrimalistBindsObject extends CommonBinds {
+  STAFF_EQUIP_DELAY := 700
+  ; casts/selects the spell and swaps to a staff if necessary
+  staffSkillWrapper(skill,instant=true) {
+    if (!Weapon.isStaff()) {
+      Weapon.set(ItemType.STAFF)
+      Sleep, %STAFF_EQUIP_DELAY%
+    } else {
+      Weapon.set(ItemType.STAFF)
+    }
+    if (instant) {
+      skill.instant()
+    } else {
+      skill.press()
+    }
+  }
+
   onMButton(update_cache=true) {
     this.updateCache(update_cache)
     if (Keyboard.isDownMod(Keyboard.LALT)) {
@@ -331,28 +347,13 @@ class PrimalistBindsObject extends CommonBinds {
   onXButton2(update_cache=true) {
     this.updateCache(update_cache)
     if (Keyboard.isDownMod(Keyboard.LWIN)) {
-      Skill.Life.Consecrate.press()
+      this.staffSkillWrapper(Skill.Life.Consecrate,instant=false)
     } else if (Keyboard.isDownMod(Keyboard.LALT)) {
-      Skill.Life.Resuscitation.press()
+      this.staffSkillWrapper(Skill.Life.Resuscitation,instant=false)
     } else {
-      Skill.Life.ExaltedSacrifice.press()
+      this.staffSkillWrapper(Skill.Life.ExaltedSacrifice,instant=false)
     }
     return true
-  }
-
-  ; casts/selects the spell and swaps to a staff if necessary
-  staffSkillWrapper(skill,instant=true) {
-    if (!Weapon.isStaff()) {
-      Weapon.set(ItemType.STAFF)
-      Sleep, 500
-    } else {
-      Weapon.set(ItemType.STAFF)
-    }
-    if (instant) {
-      skill.instant()
-    } else {
-      skill.press()
-    }
   }
   on1(update_cache=true) {
     this.updateCache(update_cache)
