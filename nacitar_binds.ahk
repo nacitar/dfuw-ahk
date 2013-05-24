@@ -339,10 +339,25 @@ class PrimalistBindsObject extends CommonBinds {
     }
     return true
   }
+
+  ; casts/selects the spell and swaps to a staff if necessary
+  staffSkillWrapper(skill,instant=true) {
+    if (!Weapon.isStaff()) {
+      Weapon.set(ItemType.STAFF)
+      Sleep, 500
+    } else {
+      Weapon.set(ItemType.STAFF)
+    }
+    if (instant) {
+      skill.instant()
+    } else {
+      skill.press()
+    }
+  }
   on1(update_cache=true) {
     this.updateCache(update_cache)
     if (Keyboard.isDownMod(Keyboard.LWIN)) {
-      Skill.Law.Bastion.instant()
+      this.staffSkillWrapper(Skill.Law.Bastion)
       return true
     }
     return base.on1(false)
@@ -350,7 +365,7 @@ class PrimalistBindsObject extends CommonBinds {
   on2(update_cache=true) {
     this.updateCache(update_cache)
     if (Keyboard.isDownMod(Keyboard.LWIN)) {
-      Skill.Law.Invigoration.instant()
+      this.staffSkillWrapper(Skill.Law.Invigoration)
       return true
     } 
     return base.on2(false)
