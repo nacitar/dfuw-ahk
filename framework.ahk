@@ -29,6 +29,9 @@ var_send(value) {
 var_msgbox(value) {
   MsgBox, %value%
 }
+var_sleep(value) {
+  Sleep, %value%
+}
 
 ; Sanely convert integers to strings so they can be appended to strings
 to_string(num) {

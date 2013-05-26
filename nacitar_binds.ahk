@@ -308,7 +308,7 @@ class PrimalistBindsObject extends CommonBinds {
   staffSkillWrapper(skill,instant=true) {
     if (!Weapon.isStaff()) {
       Weapon.set(ItemType.STAFF)
-      Sleep, %STAFF_EQUIP_DELAY%
+      var_sleep(this.STAFF_EQUIP_DELAY)
     } else {
       Weapon.set(ItemType.STAFF)
     }
