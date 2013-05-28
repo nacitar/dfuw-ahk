@@ -23,7 +23,10 @@
 
 ; Variable friendly send/msgbox, so you can in one line use the VALUE of your
 ; computation/function calls to avoid having to assign to a var first.
+
+; This also tells AHK to not mess with unspecified modifier states.
 var_send(value) {
+  value := "{Blind}" . value
   Send, %value%
 }
 var_msgbox(value) {
