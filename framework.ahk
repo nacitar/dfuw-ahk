@@ -26,7 +26,7 @@
 
 ; This also tells AHK to not mess with unspecified modifier states.
 var_send(value) {
-  value := "{Blind}" . value
+  ;value := "{Blind}" . value
   Send, %value%
 }
 var_msgbox(value) {

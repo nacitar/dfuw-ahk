@@ -306,6 +306,7 @@ class PrimalistBindsObject extends CommonBinds {
   STAFF_EQUIP_DELAY := 700
   ; casts/selects the spell and swaps to a staff if necessary
   staffSkillWrapper(skill,instant=true) {
+    skill.press()
     if (!Weapon.isStaff()) {
       Weapon.set(ItemType.STAFF)
       var_sleep(this.STAFF_EQUIP_DELAY)
@@ -314,8 +315,6 @@ class PrimalistBindsObject extends CommonBinds {
     }
     if (instant) {
       skill.instant()
-    } else {
-      skill.press()
     }
   }
 
