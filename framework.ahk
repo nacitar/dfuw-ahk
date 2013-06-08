@@ -290,7 +290,7 @@ class Keyboard {
 
 ; A class for key bindings.
 class BindingObject {
-  static PRESS_DURATION_MS := 5
+  static PRESS_DURATION_MS := 40
 
   __New(key_array) {
     down_state_array := []
@@ -326,7 +326,7 @@ class BindingObject {
   press() {
     this.down()
     ; TODO: use a Sleep that has higher resolution
-    Sleep, % BindingObject.PRESS_DURATION_MS
+    var_sleep(BindingObject.PRESS_DURATION_MS)
     this.up()
   }
 
