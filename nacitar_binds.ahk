@@ -216,7 +216,9 @@ class SkirmisherBindsObject extends CommonBinds {
   }
   onXButton2(update_cache=true) {
     this.updateCache(update_cache)
-    if (Keyboard.isDownMod(Keyboard.LALT)) {
+    if (Weapon.isBow() && Keyboard.isDownMod(Keyboard.LWIN)) {
+      Skill.Deadeye.TrueShot.press()
+    } else if (Keyboard.isDownMod(Keyboard.LALT)) {
       Skill.Brawler.Evade.instant()
     } else {
       Skill.Brawler.Dash.instant()
