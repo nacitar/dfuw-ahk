@@ -91,7 +91,7 @@ Skill.Deadeye.ExploitWeakness.set(RadialBinding(RadialType.LEFT,1))
 Skill.Deadeye.ExplosiveArrow.set( RadialBinding(RadialType.LEFT,3))
 Skill.Deadeye.Puncture.set(       RadialBinding(RadialType.LEFT,2))
 Skill.Deadeye.Salvo.set(          RadialBinding(RadialType.LEFT,6))
-Skill.Deadeye.Trueshot.set(       RadialBindings(RadialType.LEFT,7))
+Skill.Deadeye.Trueshot.set(       RadialBinding(RadialType.LEFT,7))
 
 ; Warrior Skills
 ; (none free)

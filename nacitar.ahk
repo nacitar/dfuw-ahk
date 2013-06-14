@@ -43,9 +43,9 @@ SetNumLockState, AlwaysOn
 
 ; Default role (TODO: make this save/restore from file?)
 ; TODO: allow on-the-fly changing
-;Role.set(RoleType.SKIRMISHER)
+Role.set(RoleType.SKIRMISHER)
 ;Role.set(RoleType.WARRIOR)
-Role.set(RoleType.PRIMALIST)
+;Role.set(RoleType.PRIMALIST)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User Hotkeys
